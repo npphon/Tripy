@@ -3,7 +3,6 @@ import {
   Text,
   Image,
   TextInput,
-  Touchable,
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
