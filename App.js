@@ -1,20 +1,16 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react'
+import { Text, View } from 'react-native';
+import { Provider } from 'react-redux'
+import AppNavigation from './navigation/appNavigation';
+import { store } from './redux/store';
 
-export default function App() {
+function App() {
+
   return (
-    <View style={styles.container}>
-      <Text>ขอโทษจริงๆ</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <AppNavigation/>
+    </Provider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
