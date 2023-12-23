@@ -1,46 +1,36 @@
 import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ScreenWrapper from "../components/screenWrapper";
 import { colors } from '../theme'
 import randomImage from '../assets/images/randomImage'
 import EmptyList from "../components/emptyList";
-import { useNavigation } from '@react-navigation/native'
-
-const items = [
-  {
-    id: 1,
-    place: 'Gujrat',
-    country: 'Pakistan'
-  },
-  {
-    id: 2,
-    place: 'London Eye',
-    country: 'England'
-  },
-  {
-    id: 3,
-    place: 'Washington dc',
-    country: 'America'
-  },
-  {
-    id: 4,
-    place: 'New york',
-    country: 'America'
-  },
-  {
-    id: 5,
-    place: 'New york',
-    country: 'America'
-  },
-  {
-    id: 6 ,
-    place: 'New york',
-    country: 'America'
-  },
-]
+import { useNavigation, useIsFocused } from '@react-navigation/native'
+import { getDocs, query } from "firebase/firestore";
+import { pocketRef } from "../config/firebase";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+
+  const [pockets, setPockets] = useState([]);
+
+  const isFocused = useIsFocused();
+
+  const fetchPockets = async () => {
+    const q = query(pocketRef)
+    const querySnapshot = await getDocs(q);
+    let data = []
+    querySnapshot.forEach(doc => {
+      // console.log(doc.data());
+      data.push({...doc.data(), id: doc.id})
+    })
+    setPockets(data);
+  }
+
+  useEffect(()=> {
+    if(isFocused)
+      fetchPockets();
+  },[isFocused])
+
   return (
     <ScreenWrapper className="flex-1">
       <View className='flex-row justify-between items-center p-4'>
@@ -61,7 +51,7 @@ export default function HomeScreen() {
           </View>
           <View style={{height: 430}}>
             <FlatList
-              data={items}
+              data={pockets}
               numColumns={2}
               ListEmptyComponent={<EmptyList message={"You haven't recorded any trips yet"}/>}
               keyExtractor={item => item.id}

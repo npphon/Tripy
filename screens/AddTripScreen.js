@@ -3,27 +3,50 @@ import {
   Text,
   Image,
   TextInput,
-  Touchable,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import ScreenWrapper from "../components/screenWrapper";
 import BackButton from "../components/backButton";
 import { colors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
+import Loading from "../components/loading";
+import { addDoc } from "firebase/firestore";
+import { pocketRef } from "../config/firebase";
 
 export default function AddTripScreen() {
   const [place, setPlace] = useState("");
   const [country, setCountry] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
 
-  const handleAddTrip = () => {
+  const handleAddTrip = async () => {
     if (place && country) {
       //good to go
-      navigation.navigate("Home");
+      // navigation.navigate("Home");
+      setLoading(true);
+      let doc = await addDoc(pocketRef, {
+        place,
+        country,
+      });
+      setLoading(false);
+      if (doc && doc.id) {
+        Alert.alert("create pocket successful", "", [
+          {
+            text: "ok",
+          },
+        ]);
+      }
+      navigation.goBack();
     } else {
-      //show error
+      // show error
+      Alert.alert("Place and Country are required!", "", [
+        {
+          text: "ok",
+        },
+      ]);
     }
   };
   return (
@@ -47,7 +70,7 @@ export default function AddTripScreen() {
             />
           </View>
 
-          <View className='space-y-2'>
+          <View className="space-y-2">
             <Text className={`${colors.heading} text-lg font-bold`}>
               Where on Earth?
             </Text>
@@ -68,15 +91,19 @@ export default function AddTripScreen() {
         </View>
 
         <View>
-          <TouchableOpacity
-            onPress={handleAddTrip}
-            style={{ backgroundColor: colors.button }}
-            className="my-6 rounded-full p-3 shadow-sm mx-2"
-          >
-            <Text className="text-center text-white text-lg font-bold">
-              Add Trip
-            </Text>
-          </TouchableOpacity>
+          {loading ? (
+            <Loading />
+          ) : (
+            <TouchableOpacity
+              onPress={handleAddTrip}
+              style={{ backgroundColor: colors.button }}
+              className="my-6 rounded-full p-3 shadow-sm mx-2"
+            >
+              <Text className="text-center text-white text-lg font-bold">
+                Add Trip
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </ScreenWrapper>
