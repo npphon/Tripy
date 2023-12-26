@@ -13,7 +13,7 @@ export default function WelcomeScreen() {
             <Image source={require('../assets/images/welcome.gif')} className='h-96 w-96 shadow-sm'/>
         </View>
         <View className='mx-5 mb-20'>
-            <Text className={`text-center font-bold text-4xl ${colors.heading} mb-10`}>Tripy</Text>
+            <Text className={`text-center font-bold text-4xl ${colors.heading} mb-10`}>Split Pocket</Text>
             <TouchableOpacity className='shadow-sm p-3 rounded-full mb-5' style={{backgroundColor:colors.button}}>
                 <Text onPress={()=> navigation.navigate('Home')} className='text-center text-white text-lg font-bold'>Go!</Text>
             </TouchableOpacity>

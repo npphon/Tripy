@@ -4,9 +4,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
-import AddTripScreen from "../screens/AddTripScreen";
+import AddPocketScreen from "../screens/AddPocketScreen";
 import AddExpenseScreen from "../screens/AddExpenseScreen";
-import TripExpensesScreen from "../screens/TripExpensesScreen";
+import PocketExpensesScreen from "../screens/PocketExpensesScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
 
 const Stack = createNativeStackNavigator();
@@ -18,9 +18,9 @@ export default function AppNavigation() {
         <Stack.Screen options={{headerShown: false}} name="Welcome" component={WelcomeScreen} />
         <Stack.Screen options={{headerShown: false}} name="Home" component={HomeScreen} />
         <Stack.Screen options={{headerShown: false}} name="Login" component={LoginScreen} />
-        <Stack.Screen options={{headerShown: false}} name="AddTrip" component={AddTripScreen} />
+        <Stack.Screen options={{headerShown: false}} name="AddPocket" component={AddPocketScreen} />
         <Stack.Screen options={{headerShown: false}} name="AddExpense" component={AddExpenseScreen} />
-        <Stack.Screen options={{headerShown: false}} name="TripExpenses" component={TripExpensesScreen} />
+        <Stack.Screen options={{headerShown: false}} name="PocketExpenses" component={PocketExpensesScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -7,7 +7,8 @@ import { useNavigation } from "@react-navigation/native";
 import { categories } from "../constants/index";
 import { Alert } from "react-native";
 import { expensesRef } from "../config/firebase";
-import { addDoc } from "firebase/firestore";
+import { pocketRef } from "../config/firebase";
+import { addDoc, serverTimestamp, updateDoc, doc} from "firebase/firestore";
 import Loading from "../components/loading";
 
 export default function AddExpenseScreen(props) {
@@ -16,6 +17,7 @@ export default function AddExpenseScreen(props) {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
+  // const date = new 
 
   const navigation = useNavigation();
 
@@ -23,22 +25,37 @@ export default function AddExpenseScreen(props) {
     if (title && amount && category) {
       //good to go
       // navigation.goBack();
-      setLoading(true);
-      let doc = await addDoc(expensesRef, {
-        title,
-        amount,
-        category,
-        pocketId: id,
-      });
-      setLoading(false);
-      if (doc && doc.id) {
-        Alert.alert("add expense successful", "", [
+      const numAmount = parseInt(amount);
+      if (!isNaN(numAmount)) {
+        setLoading(true);
+        let doc = await addDoc(expensesRef, {
+          title,
+          amount: numAmount,
+          category,
+          pocketId: id,
+          createAt: serverTimestamp()
+        });
+        const updatedData = {
+          amount: numAmount
+        };
+        updateAmountById(id, updatedData);
+        setLoading(false);
+        if (doc && doc.id) {
+          Alert.alert("add expense successful", "", [
+            {
+              text: "ok",
+            },
+          ]);
+        }
+        navigation.goBack();
+      } else {
+        //show error
+        Alert.alert("Please fill amount to number", "", [
           {
             text: "ok",
           },
         ]);
       }
-      navigation.goBack();
     } else {
       //show error
       Alert.alert("Please fill all the fields", "", [
@@ -48,6 +65,18 @@ export default function AddExpenseScreen(props) {
       ]);
     }
   };
+
+  const updateAmountById = async (id, updatedData) => {
+    const docRef = doc(pocketRef, id);
+  
+    try {
+      await updateDoc(docRef, updatedData);
+      console.log('Document successfully updated!');
+    } catch (error) {
+      console.error('Error updating document:', error);
+    }
+  };
+  
   return (
     <ScreenWrapper>
       <View className="flex justify-between h-full mx-4">
@@ -83,6 +112,7 @@ export default function AddExpenseScreen(props) {
             </Text>
             <TextInput
               value={amount}
+              keyboardType="number-pad"
               onChangeText={(value) => setAmount(value)}
               className="p-4 bg-white rounded-full mb-3"
             />
