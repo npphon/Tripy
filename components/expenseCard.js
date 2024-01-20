@@ -13,7 +13,7 @@ export default function ExpenseCard({item}) {
           {/* <Text className={`${colors.heading} text-xs`}>{item.category}</Text> */}
         </View>
         <View>
-          <Text>${item.amount}</Text>
+          <Text>{item.amount} บาท</Text>
         </View>
       </View>
   );

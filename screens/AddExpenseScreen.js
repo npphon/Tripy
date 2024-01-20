@@ -8,7 +8,13 @@ import { categories } from "../constants/index";
 import { Alert } from "react-native";
 import { expensesRef } from "../config/firebase";
 import { pocketRef } from "../config/firebase";
-import { addDoc, serverTimestamp, updateDoc, doc} from "firebase/firestore";
+import {
+  addDoc,
+  serverTimestamp,
+  updateDoc,
+  doc,
+  increment,
+} from "firebase/firestore";
 import Loading from "../components/loading";
 
 export default function AddExpenseScreen(props) {
@@ -17,7 +23,6 @@ export default function AddExpenseScreen(props) {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
-  // const date = new 
 
   const navigation = useNavigation();
 
@@ -25,7 +30,7 @@ export default function AddExpenseScreen(props) {
     if (title && amount && category) {
       //good to go
       // navigation.goBack();
-      const numAmount = parseInt(amount);
+      const numAmount = (-parseInt(amount));
       if (!isNaN(numAmount)) {
         setLoading(true);
         let doc = await addDoc(expensesRef, {
@@ -33,12 +38,12 @@ export default function AddExpenseScreen(props) {
           amount: numAmount,
           category,
           pocketId: id,
-          createAt: serverTimestamp()
+          createAt: serverTimestamp(),
         });
-        const updatedData = {
-          amount: numAmount
-        };
-        updateAmountById(id, updatedData);
+        // const updatedData = {
+        //   amount: FieldValue.increment(numAmount),
+        // };
+        updateAmountPocket(id);
         setLoading(false);
         if (doc && doc.id) {
           Alert.alert("add expense successful", "", [
@@ -66,17 +71,18 @@ export default function AddExpenseScreen(props) {
     }
   };
 
-  const updateAmountById = async (id, updatedData) => {
+  const updateAmountPocket = async (id) => {
     const docRef = doc(pocketRef, id);
-  
+
     try {
-      await updateDoc(docRef, updatedData);
-      console.log('Document successfully updated!');
+      await updateDoc(docRef, {
+        amount: increment(-parseInt(amount))
+      });
     } catch (error) {
-      console.error('Error updating document:', error);
+      console.error("Error updating document:", error);
     }
   };
-  
+
   return (
     <ScreenWrapper>
       <View className="flex justify-between h-full mx-4">

@@ -7,6 +7,8 @@ import EmptyList from "../components/emptyList";
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { getDocs, query } from "firebase/firestore";
 import { cashboxRef, pocketRef } from "../config/firebase";
+import { PlusCircleIcon } from "react-native-heroicons/outline";
+
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -47,15 +49,18 @@ export default function HomeScreen() {
   return (
     <ScreenWrapper className="flex-1">
       <View className='flex-row justify-between items-center p-4'>
-        <Text className={`${colors.heading} font-bold text-3xl shadow-sm`}>Split Pocket</Text>
+        <Text className={`${colors.heading} font-bold text-3xl`}>Split Pocket</Text>
         <TouchableOpacity className='p-2 px-3 bg-white border border-gray-200 rounded-full'>
           <Text onPress={()=> navigation.navigate('Welcome')} className={colors.heading}>Logout</Text> 
         </TouchableOpacity>
       </View>
       <View className='justify-center bg-blue-200 rounded-xl mx-4 mb-4 p-6'>
         <Text className='mb-4'>Cashbox</Text>
-        <Text>{`฿ ${cashbox.length > 0 ? cashbox[0].amount : 'Loading...'}`}</Text>
+        <View className='flex-row justify-between items-center'>
+        <Text className='text-base'>{`฿ ${cashbox.length > 0 ? cashbox[0].amount : 'Loading...'}`}</Text>
+        <PlusCircleIcon onPress={() => navigation.goBack()} size="35" color={colors.button}/>
         {/* <Image className='w-60 h-60' source={require('../assets/images/banner.png')}/> */}
+        </View>
       </View>
       <View className='px-4 space-y-3'>
           <View className="flex-row justify-between items-center">
@@ -77,7 +82,7 @@ export default function HomeScreen() {
               className="mx-1"
               renderItem={({item}) => {
                 return (
-                  <TouchableOpacity onPress={()=> navigation.navigate('PocketExpenses', {...item})} className='bg-white p-3 rounded-2xl mb-3 shadow-sm'>
+                  <TouchableOpacity onPress={()=> navigation.navigate('PocketExpenses', {...item})} className='bg-white p-3 rounded-2xl mb-3'>
                     <View>
                       <Image className='w-36 h-36 mb-2' source={randomImage()} />
                       <Text className={`${colors.heading} font-bold`}>{item.pocketName}</Text>
