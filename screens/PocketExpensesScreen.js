@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  FlatList,
+  Alert,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import ScreenWrapper from "../components/screenWrapper";
 import { colors } from "../theme";
@@ -15,6 +22,7 @@ import {
   where,
   getDoc,
   orderBy,
+  deleteDoc,
 } from "firebase/firestore";
 
 export default function PocketExpensesScreen(props) {
@@ -44,6 +52,48 @@ export default function PocketExpensesScreen(props) {
     const documentSnapshot = (await getDoc(documentRef)).data();
     setPockets(documentSnapshot);
   };
+  const deleteDocument = async () => {
+    deleteExpensesByPocketId()
+    const docRef = await deleteDoc(doc(pocketRef, id));
+    if (!doc.id) {
+      Alert.alert("delete pockets successful", "", [
+        {
+          text: "ok",
+        },
+      ]);
+      navigation.goBack();
+    } else {
+      //show error
+      Alert.alert("delete pockets unsuccessful", "", [
+        {
+          text: "ok",
+        },
+      ]);
+    }
+  };
+
+  const buttonDeletePocket = async () => {
+    Alert.alert("Are you sure?", "", [
+      {
+        text: "Cancel",
+      },
+      { text: "delete pocket", onPress: () => deleteDocument() },
+    ]);
+  };
+
+  const deleteExpensesByPocketId = async () => {
+    try {
+      const q = query(expensesRef, where('pocketId', '==', id));
+  
+      const querySnapshot = await getDocs(q);
+  
+      querySnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+    } catch (error) {
+      console.error('Error deleting documents: ', error);
+    }
+  };
 
   useEffect(() => {
     if (isFocused) {
@@ -72,7 +122,7 @@ export default function PocketExpensesScreen(props) {
               </Text>
             </View>
             <TouchableOpacity
-              onPress={() => navigation.goBack()} //มาเขียนfunction ลบ pocket ต่อ
+              onPress={() => buttonDeletePocket()} //มาเขียนfunction ลบ pocket ต่อ
               className="mr-3 mt-3"
             >
               <TrashIcon size="25" color="black" />
