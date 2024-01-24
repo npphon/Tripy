@@ -4,6 +4,7 @@ import ScreenWrapper from '../components/screenWrapper'
 import { colors } from '../theme'
 import randomImage from '../assets/images/randomImage';
 import EmptyLost from '../components/emptyList';
+import { useNavigation } from '@react-navigation/native';
 const items = [
     {
       id: 1,
@@ -30,6 +31,7 @@ const items = [
   ]
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
   return (
     <ScreenWrapper className="flex-1">
       <View className="flex-row justify-between items-center p-4">
@@ -44,15 +46,15 @@ export default function HomeScreen() {
       <View className="px-4 space-y-4">
         <View className="flex-row justify-between items-center">
         <Text className={`${colors.heading} font-bold text-xl `}>Recent Trips</Text>
-        <TouchableOpacity className="p-2 px-3 bg-white border border-gray-200 rounded-full">
+        <TouchableOpacity onPress={()=> navigation.navigate('AddTrip')} className="p-2 px-3 bg-white border border-gray-200 rounded-full">
           <Text className={colors.heading}>Add Trip</Text>
         </TouchableOpacity>
         </View>
         <View style={{heading: 430}}>
           <FlatList 
-          data={[]}
+          data={[items]}
           numColumns={2}
-          ListEmptyComponent={<EmptyLost /> }
+          ListEmptyComponent={<EmptyLost message={"You haven't recorded any Trips yet"}/> }
           keyExtractor={item=> item.id}
           showsHorizontalScrollIndicator={false}
           columnWrapperStyle={{
