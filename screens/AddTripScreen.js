@@ -30,7 +30,7 @@ export default function AddTripScreen() {
     <ScreenWrapper>
       <View className="flex justify-between h-full mx-4">
         <View>
-          <View className="relative mt-12">
+          <View className="relative mt-5">
             <View className="absolute top-0 left-0 z-10">
               <BackButton />
             </View>
@@ -40,42 +40,44 @@ export default function AddTripScreen() {
             </Text>
           </View>
 
-          <View className="flex-row justify-center my-10 mt-10">
+          <View className="flex-row justify-center my-3 mt-5">
             <Image
-              className="h-80 w-80"
+              className="h-72 w-72"
               source={require("../assets/images/4.png")}
             />
           </View>
+
+          <View className="space-y-2 mx-2">
+            <Text className={`${colors.heading}text-lg font-bold`}>
+              Where on Earth?
+            </Text>
+            <TextInput
+              value={place}
+              onChangeText={(value) => setPlace(value)}
+              className="p-4 bg-white rounded-full mb-3"
+            />
+            <Text className={`${colors.heading}text-lg font-bold`}>
+              Which Country
+            </Text>
+            <TextInput
+              value={country}
+              onChangeText={(value) => setCountry(value)}
+              className="p-4 bg-white rounded-full mb-3 "
+            />
+          </View>
         </View>
-        <View className="space-y-20 mx-2">
-          <Text className={`${colors.heading}text-lg font-bold`}>
-            Where on Earth?
-          </Text>
-          <TextInput
-            value={place}
-            onChangeText={(value) => setPlace(value)}
-            className="p-6 bg-white rounded-full mb-56 "
-          />
-          <Text className={`${colors.heading}text-lg font-bold`}>
-            Which Country
-          </Text>
-          <TextInput
-            value={country}
-            onChangeText={(value) => setCountry(value)}
-            className="p-6 bg-white rounded-full mb-10 "
-          />
+
+        <View>
+          <TouchableOpacity
+            onPress={handleAddTrip}
+            style={{ backgroundColor: colors.Button }}
+            className="my-6 rounded-full p-3 shadow-sm mx-2"
+          >
+            <Text className="text-center text-white text-lg font-bold">
+              AddTrip
+            </Text>
+          </TouchableOpacity>
         </View>
-      </View>
-      <View>
-        <TouchableOpacity
-          onPress={handleAddTrip}
-          style={{ backgroundColor: colors.Button }}
-          className="my-6 rounded-full p-3 shadow-sm mx-2"
-        >
-          <Text className="text-center text-white text-lg font-bold">
-            AddTrip
-          </Text>
-        </TouchableOpacity>
       </View>
     </ScreenWrapper>
   );
