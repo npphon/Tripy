@@ -6,13 +6,14 @@ import { getFirestore, collection } from 'firebase/firestore'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAMo1wffhSt91aXrpGWToQcnQ3sYLfaKvA",
-  authDomain: "split-pocket.firebaseapp.com",
-  projectId: "split-pocket",
-  storageBucket: "split-pocket.appspot.com",
-  messagingSenderId: "104848244052",
-  appId: "1:104848244052:web:7de00097cc1b9d4ec69cc1"
+  apiKey: "AIzaSyCXWbi8FfsmTs75vJhCNwuzurCKcDIHzPs",
+  authDomain: "split-pocket-aea1c.firebaseapp.com",
+  projectId: "split-pocket-aea1c",
+  storageBucket: "split-pocket-aea1c.appspot.com",
+  messagingSenderId: "139058903694",
+  appId: "1:139058903694:web:cde1faa7e4e263b224e7df"
 };
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
