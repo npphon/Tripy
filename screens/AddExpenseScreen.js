@@ -4,7 +4,7 @@ import React from 'react'
 export default function AddExpenseScreen() {
   return (
     <View>
-      <Text>AddExpenseScreen</Text>
+      <Text>AddExpensesScreen</Text>
     </View>
   )
 }

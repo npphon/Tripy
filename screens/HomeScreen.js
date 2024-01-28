@@ -1,9 +1,9 @@
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
-import ScreenWrapper from '../components/screenWrapper'
-import { colors } from '../theme'
+import ScreenWrapper from '../components/screenWrapper';
+import { colors } from '../theme';
 import randomImage from '../assets/images/randomImage';
-import EmptyLost from '../components/emptyList';
+import EmptyList from '../components/emptyList';
 import { useNavigation } from '@react-navigation/native';
 const items = [
     {
@@ -52,9 +52,9 @@ export default function HomeScreen() {
         </View>
         <View style={{heading: 430}}>
           <FlatList 
-          data={[items]}
+          data={items}
           numColumns={2}
-          ListEmptyComponent={<EmptyLost message={"You haven't recorded any Trips yet"}/> }
+          ListEmptyComponent={<EmptyList message={"You haven't recorded any Trips yet"}/> }
           keyExtractor={item=> item.id}
           showsHorizontalScrollIndicator={false}
           columnWrapperStyle={{
@@ -63,11 +63,11 @@ export default function HomeScreen() {
             className="mx-1"
           renderItem={({item})=>{
             return(
-              <TouchableOpacity className=" bg-white p-3  rounded-2xl mb-3 shadow-sm">
+              <TouchableOpacity onPress={()=> navigation.navigate('TripExpenses')} className=" bg-white p-3  rounded-2xl mb-3 shadow-sm">
                 <View>
                   <Image  className="w-36 h-36 mb-2" source={randomImage()}  />
                   <Text className={`${colors.heading} font-bold `}>{item.place}</Text>
-                  <Text className={`${colors.heading}`}>{item.country}</Text>
+                  <Text className={`${colors.heading} text-xs`}>{item.country}</Text>
                 </View>
               </TouchableOpacity>
             )
