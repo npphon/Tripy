@@ -24,34 +24,46 @@ import {
   orderBy,
   deleteDoc,
 } from "firebase/firestore";
+import axios from 'axios';
 
 export default function PocketExpensesScreen(props) {
-  const { id } = props.route.params;
+  // const { id } = props.route.params;
+  const { id, pocket_balance, pocket_name } = props.route.params;
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const [expenses, setExpenses] = useState([]);
   const [pockets, setPockets] = useState([]);
-
-  const fetchExpenses = async () => {
-    const q = query(
-      expensesRef,
-      where("pocketId", "==", id),
-      orderBy("createAt", "desc")
-    );
-    const querySnapshot = await getDocs(q);
-    let data = [];
-    querySnapshot.forEach((doc) => {
-      // console.log(doc.data());
-      data.push({ ...doc.data(), id: doc.id });
-    });
-    setExpenses(data);
+  
+  const fetchExpenses = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/expenses/${id}`);
+      setExpenses(response.data)
+    } catch (error) {
+      console.error('Error fetching pocket:', error);
+    }
   };
 
-  const fetchPocket = async () => {
-    const documentRef = doc(pocketRef, id);
-    const documentSnapshot = (await getDoc(documentRef)).data();
-    setPockets(documentSnapshot);
-  };
+  // const fetchExpenses = async () => {
+  //   const q = query(
+  //     expensesRef,
+  //     where("pocketId", "==", id),
+  //     orderBy("createAt", "desc")
+  //   );
+  //   const querySnapshot = await getDocs(q);
+  //   let data = [];
+  //   querySnapshot.forEach((doc) => {
+  //     // console.log(doc.data());
+  //     data.push({ ...doc.data(), id: doc.id });
+  //   });
+  //   setExpenses(data);
+  // };
+
+  // const fetchPocket = async () => {
+  //   const documentRef = doc(pocketRef, id);
+  //   const documentSnapshot = (await getDoc(documentRef)).data();
+  //   setPockets(documentSnapshot);
+  // };
+
   const deleteDocument = async () => {
     deleteExpensesByPocketId()
     const docRef = await deleteDoc(doc(pocketRef, id));
@@ -97,10 +109,11 @@ export default function PocketExpensesScreen(props) {
 
   useEffect(() => {
     if (isFocused) {
-      fetchExpenses();
-      fetchPocket();
+      fetchExpenses(id);
+      // fetchPocket();
     }
   }, [isFocused]);
+
   return (
     <ScreenWrapper className="flex-1">
       <View className="px-4">
@@ -111,14 +124,16 @@ export default function PocketExpensesScreen(props) {
           <View className="border-b-2 pb-2 flex-row justify-between">
             <View>
               <Text className={`${colors.heading} text-xl font-bold pl-14`}>
-                {pockets.pocketName}
+                {/* {pockets.length > 0 ? pockets[0].pocket_name : "Loading" } */}
+                {pocket_name}
               </Text>
               <Text className={`${colors.heading} text-base pl-14`}>
-                {`฿ ${
-                  pockets.amount || pockets.amount == 0
-                    ? pockets.amount
+                {/* {`฿ ${
+                  pockets.length > 0
+                    ? pockets[0].pocket_balance
                     : "Loading..."
-                }`}
+                }`} */}
+                {`฿ ${pocket_balance}`}
               </Text>
             </View>
             <TouchableOpacity
