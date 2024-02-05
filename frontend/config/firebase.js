@@ -19,6 +19,7 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
 export const pocketRef = collection(db, 'pockets')
+export const cashboxRef = collection(db, 'cashbox')
 export const expensesRef = collection (db, 'expenses')
 
 export default app;

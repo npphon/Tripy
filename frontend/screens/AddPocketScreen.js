@@ -15,21 +15,20 @@ import Loading from "../components/loading";
 import { addDoc } from "firebase/firestore";
 import { pocketRef } from "../config/firebase";
 
-export default function AddTripScreen() {
-  const [place, setPlace] = useState("");
-  const [country, setCountry] = useState("");
+export default function AddPocketScreen() {
+  const [pocketName, setPocketName] = useState("");
+  const [amount, setAmount] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
-
-  const handleAddTrip = async () => {
-    if (place && country) {
+  const handleAddPocket = async () => {
+    if (pocketName) {
       //good to go
       // navigation.navigate("Home");
       setLoading(true);
       let doc = await addDoc(pocketRef, {
-        place,
-        country,
+        pocketName,
+        amount,
       });
       setLoading(false);
       if (doc && doc.id) {
@@ -59,7 +58,7 @@ export default function AddTripScreen() {
             </View>
 
             <Text className={`${colors.heading} text-xl font-bold text-center`}>
-              Add Trip
+              Add Pocket
             </Text>
           </View>
 
@@ -72,21 +71,14 @@ export default function AddTripScreen() {
 
           <View className="space-y-2">
             <Text className={`${colors.heading} text-lg font-bold`}>
-              Where on Earth?
+              Pocket Name
             </Text>
             <TextInput
-              value={place}
-              onChangeText={(value) => setPlace(value)}
+              value={pocketName}
+              onChangeText={(value) => setPocketName(value)}
               className="p-4 bg-white rounded-full mb-3"
             />
-            <Text className={`${colors.heading} text-lg font-bold`}>
-              Which Country
-            </Text>
-            <TextInput
-              value={country}
-              onChangeText={(value) => setCountry(value)}
-              className="p-4 bg-white rounded-full mb-3"
-            />
+            
           </View>
         </View>
 
@@ -95,12 +87,12 @@ export default function AddTripScreen() {
             <Loading />
           ) : (
             <TouchableOpacity
-              onPress={handleAddTrip}
+              onPress={handleAddPocket}
               style={{ backgroundColor: colors.button }}
               className="my-6 rounded-full p-3 shadow-sm mx-2"
             >
               <Text className="text-center text-white text-lg font-bold">
-                Add Trip
+                Add Pocket
               </Text>
             </TouchableOpacity>
           )}
