@@ -43,31 +43,19 @@ export default function PocketExpensesScreen(props) {
     }
   };
 
-  // const fetchExpenses = async () => {
-  //   const q = query(
-  //     expensesRef,
-  //     where("pocketId", "==", id),
-  //     orderBy("createAt", "desc")
-  //   );
-  //   const querySnapshot = await getDocs(q);
-  //   let data = [];
-  //   querySnapshot.forEach((doc) => {
-  //     // console.log(doc.data());
-  //     data.push({ ...doc.data(), id: doc.id });
-  //   });
-  //   setExpenses(data);
-  // };
+  const deleteExpensesByPocketId = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/pockets/expenses/${id}`);
+    } catch (error) {
+      console.error('Error fetching pocket:', error);
+    }
+  };
+  
 
-  // const fetchPocket = async () => {
-  //   const documentRef = doc(pocketRef, id);
-  //   const documentSnapshot = (await getDoc(documentRef)).data();
-  //   setPockets(documentSnapshot);
-  // };
-
-  const deleteDocument = async () => {
-    deleteExpensesByPocketId()
-    const docRef = await deleteDoc(doc(pocketRef, id));
-    if (!doc.id) {
+  const deleteDocument = async (id) => {
+    deleteExpensesByPocketId(id)
+    const response = await axios.delete(`http://localhost:3000/pockets/${id}`);
+    if (response.status == 200) {
       Alert.alert("delete pockets successful", "", [
         {
           text: "ok",
@@ -89,23 +77,23 @@ export default function PocketExpensesScreen(props) {
       {
         text: "Cancel",
       },
-      { text: "delete pocket", onPress: () => deleteDocument() },
+      { text: "delete pocket", onPress: () => deleteDocument(id) },
     ]);
   };
 
-  const deleteExpensesByPocketId = async () => {
-    try {
-      const q = query(expensesRef, where('pocketId', '==', id));
+  // const deleteExpensesByPocketId = async () => {
+  //   try {
+  //     const q = query(expensesRef, where('pocketId', '==', id));
   
-      const querySnapshot = await getDocs(q);
+  //     const querySnapshot = await getDocs(q);
   
-      querySnapshot.forEach(async (doc) => {
-        await deleteDoc(doc.ref);
-      });
-    } catch (error) {
-      console.error('Error deleting documents: ', error);
-    }
-  };
+  //     querySnapshot.forEach(async (doc) => {
+  //       await deleteDoc(doc.ref);
+  //     });
+  //   } catch (error) {
+  //     console.error('Error deleting documents: ', error);
+  //   }
+  // };
 
   useEffect(() => {
     if (isFocused) {
