@@ -5,9 +5,10 @@ import { colors } from "../theme";
 import randomImage from "../assets/images/randomImage";
 import EmptyList from "../components/emptyList";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-import { getDocs, query } from "firebase/firestore";
-import { cashboxRef, pocketRef } from "../config/firebase";
 import { PlusCircleIcon } from "react-native-heroicons/outline";
+import { ArrowDownTrayIcon } from "react-native-heroicons/outline";
+import { ArrowUpTrayIcon } from "react-native-heroicons/outline";
+import { ClockIcon } from "react-native-heroicons/outline";
 import axios from "axios";
 
 export default function HomeScreen() {
@@ -20,46 +21,25 @@ export default function HomeScreen() {
 
   const fetchCashbox = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/cashbox');
+      const response = await axios.get("http://localhost:3000/pockets/1");
       setCashbox(response.data);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
-
-  // const fetchCashbox = async () => {
-  //   const querySnapshot = await getDocs(cashboxRef);
-  //   let data = []
-  //   querySnapshot.forEach(doc => {
-  //     // console.log(doc.data());
-  //     data.push({...doc.data(), id: doc.id})
-  //   })
-  //   setCashbox(data);
-  //   // console.log(data);
-  // }
 
   const fetchPockets = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/pockets');
+      const response = await axios.get("http://localhost:3000/pockets");
       setPockets(response.data);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
-  // const fetchPockets = async () => {
-  //   const q = query(pocketRef);
-  //   const querySnapshot = await getDocs(q);
-  //   let data = [];
-  //   querySnapshot.forEach((doc) => {
-  //     // console.log(doc.data());
-  //     data.push({ ...doc.data(), id: doc.id });
-  //   });
-  //   setPockets(data);
-  // };
-
   useEffect(() => {
     if (isFocused) fetchCashbox();
+    // console.log(cashbox);
     fetchPockets();
   }, [isFocused]);
 
@@ -81,15 +61,34 @@ export default function HomeScreen() {
       <View className="justify-center bg-blue-200 rounded-xl mx-4 mb-4 p-6">
         <Text className="mb-4">Cashbox</Text>
         <View className="flex-row justify-between items-center">
-          <Text className="text-base">{`฿ ${
-            cashbox.length > 0 ? cashbox[0].balance : "Loading..."
-          }`}</Text>
-          <PlusCircleIcon
-            onPress={() => navigation.goBack()}
-            size="35"
-            color={colors.button}
-          />
-          {/* <Image className='w-60 h-60' source={require('../assets/images/banner.png')}/> */}
+          <Text className="text-base">
+            {`฿ ${
+              cashbox.length > 0 ? cashbox[0].pocket_balance : "Loading..."
+            }`}
+          </Text>
+          <View className="flex-row">
+            <View className="p-2">
+              <ArrowUpTrayIcon
+                onPress={() => navigation.navigate("SelectPocket", cashbox[0] )}
+                size="28"
+                color="black"
+              />
+            </View>
+            <View className="p-2">
+              <ArrowDownTrayIcon
+                onPress={() => navigation.navigate("AddCashbox")}
+                size="28"
+                color="black"
+              />
+            </View>
+            <View className="ml-2 p-2">
+            <ClockIcon
+                onPress={() => navigation.navigate("PocketExpenses", {id: 1 , pocket_name: "Cashbox"})}
+                size="28"
+                color="black"
+              />
+            </View>
+          </View>
         </View>
       </View>
       <View className="px-4 space-y-3">
@@ -102,9 +101,9 @@ export default function HomeScreen() {
             <Text className={colors.heading}>Add Pocket</Text>
           </TouchableOpacity>
         </View>
-        <View style={{ height: 430 }}>
+        <View style={{ height: 550 }}>
           <FlatList
-            data={pockets}
+            data={pockets.filter((item) => item.id !== 1)}
             numColumns={2}
             ListEmptyComponent={
               <EmptyList message={"You haven't recorded any trips yet"} />

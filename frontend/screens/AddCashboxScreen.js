@@ -1,50 +1,59 @@
-import {
-  View,
-  Text,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import ScreenWrapper from "../components/screenWrapper";
 import BackButton from "../components/backButton";
 import { colors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
+import { categories } from "../constants/index";
+import { Alert } from "react-native";
+import { pocketRef } from "../config/firebase";
 import Loading from "../components/loading";
 import axios from "axios";
 
-export default function AddPocketScreen() {
-  const [pocketName, setPocketName] = useState("");
-  // const [amount, setAmount] = useState(0);
+export default function AddCashboxScreen() {
+  const [balance, setBalance] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
 
-  const handleAddPocket = async () => {
-    if (pocketName) {
+  const handleAddCashbox = async () => {
+    if (balance) {
       try {
         setLoading(true);
-        const response = await axios.post("http://localhost:3000/pockets", {
-          pocket_name: pocketName,
+        const response = await axios.patch("http://localhost:3000/cashbox/1", {
+          balance: balance,
         });
+        addExpense()
         setLoading(false);
         if (response.status === 201) {
           const data = response.data;
-          Alert.alert("Create pocket successful", "", [
+          Alert.alert("add cashbox successful", "", [
             { text: "OK", onPress: () => navigation.goBack() },
           ]);
         } else {
-          Alert.alert("Error creating pocket", "", [{ text: "OK" }]);
+          Alert.alert("Error creating cashbox", "", [{ text: "OK" }]);
         }
       } catch (error) {
         console.error("Error:", error);
-        Alert.alert("Error creating pocket", "", [{ text: "OK" }]);
+        Alert.alert("Error creating cashbox", "", [{ text: "OK" }]);
       }
     } else {
-      Alert.alert("Pocket Name and Balance are required!", "", [
+      Alert.alert("cashbox Balance are required!", "", [
         { text: "OK" },
       ]);
+    }
+  };
+
+  const addExpense = async () => {
+    try {
+      const response = await axios.post("http://localhost:3000/expenses", {
+        title: "เงินเข้าสำเร็จ",
+        amount: balance, 
+        category: "other",
+        pocket_id: 1,
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -58,24 +67,25 @@ export default function AddPocketScreen() {
             </View>
 
             <Text className={`${colors.heading} text-xl font-bold text-center`}>
-              Add Pocket
+              Add Cashbox
             </Text>
           </View>
 
           <View className="flex-row justify-center my-3 mt-5">
             <Image
               className="h-72 w-72"
-              source={require("../assets/images/4.png")}
+              source={require("../assets/images/expenseBanner.png")}
             />
           </View>
 
           <View className="space-y-2">
             <Text className={`${colors.heading} text-lg font-bold`}>
-              Pocket Name
+              How much?
             </Text>
             <TextInput
-              value={pocketName}
-              onChangeText={(value) => setPocketName(value)}
+              value={balance}
+              keyboardType="number-pad"
+              onChangeText={(value) => setBalance(value)}
               className="p-4 bg-white rounded-full mb-3"
             />
           </View>
@@ -86,12 +96,12 @@ export default function AddPocketScreen() {
             <Loading />
           ) : (
             <TouchableOpacity
-              onPress={handleAddPocket}
+              onPress={handleAddCashbox}
               style={{ backgroundColor: colors.button }}
               className="my-6 rounded-full p-3 shadow-sm mx-2"
             >
               <Text className="text-center text-white text-lg font-bold">
-                Add Pocket
+                Add Cashbox
               </Text>
             </TouchableOpacity>
           )}
