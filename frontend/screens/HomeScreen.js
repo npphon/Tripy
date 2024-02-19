@@ -8,6 +8,7 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { PlusCircleIcon } from "react-native-heroicons/outline";
 import { ArrowDownTrayIcon } from "react-native-heroicons/outline";
 import { ArrowUpTrayIcon } from "react-native-heroicons/outline";
+import { ClockIcon } from "react-native-heroicons/outline";
 import axios from "axios";
 
 export default function HomeScreen() {
@@ -38,7 +39,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (isFocused) fetchCashbox();
-    console.log(cashbox);
+    // console.log(cashbox);
     fetchPockets();
   }, [isFocused]);
 
@@ -66,18 +67,25 @@ export default function HomeScreen() {
             }`}
           </Text>
           <View className="flex-row">
-            <View className="mr-5 border-2 rounded-xl p-2">
+            <View className="p-2">
               <ArrowUpTrayIcon
                 onPress={() => navigation.navigate("SelectPocket", cashbox[0] )}
                 size="28"
-                color={colors.button}
+                color="black"
               />
             </View>
-            <View className="border-2 rounded-xl p-2">
+            <View className="p-2">
               <ArrowDownTrayIcon
                 onPress={() => navigation.navigate("AddCashbox")}
                 size="28"
-                color={colors.button}
+                color="black"
+              />
+            </View>
+            <View className="ml-2 p-2">
+            <ClockIcon
+                onPress={() => navigation.navigate("PocketExpenses", {id: 1 , pocket_name: "Cashbox"})}
+                size="28"
+                color="black"
               />
             </View>
           </View>

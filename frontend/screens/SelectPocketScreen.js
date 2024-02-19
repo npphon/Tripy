@@ -10,7 +10,7 @@ import axios from "axios";
 export default function SelectPocketScreen(props) {
   const navigation = useNavigation();
   const { id :excludedId, pocket_balance: excludedBalance, pocket_name: excludedName } = props.route.params;
-  console.log(excludedId, excludedBalance, excludedName);
+  // console.log(excludedId, excludedBalance, excludedName);
   const [pockets, setPockets] = useState([]);
   const [cashbox, setCashbox] = useState([]);
 
@@ -45,7 +45,7 @@ export default function SelectPocketScreen(props) {
         <Text className={`${colors.heading} font-bold text-3xl`}>โอนไป...</Text>
         <TouchableOpacity className="p-2 px-3 bg-white border border-gray-200 rounded-full">
           <Text
-            onPress={() => navigation.navigate("Home")}
+            onPress={() => navigation.goBack()}
             className={colors.heading}
           >
             X

@@ -19,7 +19,7 @@ export default function TransferScreen(props) {
   // const { id } = props.route.params;
   const { id, pocket_balance, pocket_name } = props.route.params;
   const { excludedId, excludedBalance, excludedName } = props.route.params;
-  // console.log(id, pocket_balance, pocket_name);
+  // console.log("id",id, pocket_balance, pocket_name);
   // console.log(excludedId, excludedBalance, excludedName);
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -35,10 +35,12 @@ export default function TransferScreen(props) {
           targetPocketId: id,
           amountToMove: amount,
         });
+        addExpense(excludedName,pocket_name,amount,id)
+        addExpense(excludedName,pocket_name,-amount,excludedId)
         setLoading(false);
         if (response.status === 200) {
           Alert.alert("move money successful", "", [
-            { text: "OK", onPress: () => navigation.navigate("Home")},
+            { text: "OK", onPress: () => navigation.navigate("Home") },
           ]);
         } else {
           Alert.alert("Error moving money", "", [{ text: "OK" }]);
@@ -48,15 +50,26 @@ export default function TransferScreen(props) {
         Alert.alert("Error moving money", "", [{ text: "OK" }]);
       }
     } else {
-      Alert.alert("amount are required!", "", [
-        { text: "OK" },
-      ]);
+      Alert.alert("amount are required!", "", [{ text: "OK" }]);
+    }
+  };
+
+  const addExpense = async (from_pocket,to_pocket,amount,id) => {
+    try {
+      const response = await axios.post("http://localhost:3000/expenses", {
+        title: `ย้ายเงินจาก ${from_pocket} ไป ${to_pocket} สำเร็จ`,
+        amount: amount, 
+        category: "other",
+        pocket_id: id,
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
   // useEffect(() => {
   //   if (isFocused) {
-      // fetchPocket();
+  // fetchPocket();
   //   }
   // }, [isFocused]);
 

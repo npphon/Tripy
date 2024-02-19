@@ -154,6 +154,34 @@ app.patch("/pockets/:id", (req, res) => {
   });
 });
 
+// หักเงิน
+app.patch("/pocket/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const { pocket_balance } = req.body;
+
+  const getCashboxById = `SELECT * FROM pockets WHERE id = ${id}`;
+
+  const updateCashboxById =
+    "UPDATE pockets SET pocket_balance = pocket_balance + $1 WHERE id = $2";
+
+  db.all(getCashboxById, (err, rows) => {
+    const noCashboxFound = !rows.length;
+    if (noCashboxFound) {
+      console.error(err);
+      return res.status(400).send("cashbox doesn't exist in database");
+    }
+
+    db.run(updateCashboxById, [pocket_balance, id], function (err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Internal Server Error");
+      }
+
+      res.status(201).json({ id: id, pocket_balance });
+    });
+  });
+});
+
 app.delete("/pockets/:id", (req, res) => {
   const id = parseInt(req.params.id);
 

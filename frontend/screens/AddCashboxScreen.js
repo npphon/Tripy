@@ -23,6 +23,7 @@ export default function AddCashboxScreen() {
         const response = await axios.patch("http://localhost:3000/cashbox/1", {
           balance: balance,
         });
+        addExpense()
         setLoading(false);
         if (response.status === 201) {
           const data = response.data;
@@ -40,6 +41,19 @@ export default function AddCashboxScreen() {
       Alert.alert("cashbox Balance are required!", "", [
         { text: "OK" },
       ]);
+    }
+  };
+
+  const addExpense = async () => {
+    try {
+      const response = await axios.post("http://localhost:3000/expenses", {
+        title: "เงินเข้าสำเร็จ",
+        amount: balance, 
+        category: "other",
+        pocket_id: 1,
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 

@@ -13,47 +13,47 @@ import EmptyList from "../components/emptyList";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import BackButton from "../components/backButton";
 import ExpenseCard from "../components/expenseCard";
-import { expensesRef, pocketRef } from "../config/firebase";
 import { TrashIcon } from "react-native-heroicons/outline";
-import {
-  doc,
-  getDocs,
-  query,
-  where,
-  getDoc,
-  orderBy,
-  deleteDoc,
-} from "firebase/firestore";
-import axios from 'axios';
+import { ArrowUpTrayIcon } from "react-native-heroicons/outline";
+import axios from "axios";
 
 export default function PocketExpensesScreen(props) {
-  // const { id } = props.route.params;
   const { id, pocket_balance, pocket_name } = props.route.params;
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const [expenses, setExpenses] = useState([]);
   const [pockets, setPockets] = useState([]);
-  
+
+  const fetchPocket = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/pockets/${id}`);
+      setPockets(response.data);
+    } catch (error) {
+      console.error("Error fetching pocket:", error);
+    }
+  };
+
   const fetchExpenses = async (id) => {
     try {
       const response = await axios.get(`http://localhost:3000/expenses/${id}`);
-      setExpenses(response.data)
+      setExpenses(response.data);
     } catch (error) {
-      console.error('Error fetching pocket:', error);
+      console.error("Error fetching expense:", error);
     }
   };
 
   const deleteExpensesByPocketId = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/pockets/expenses/${id}`);
+      const response = await axios.delete(
+        `http://localhost:3000/pockets/expenses/${id}`
+      );
     } catch (error) {
-      console.error('Error fetching pocket:', error);
+      console.error("Error delete expense:", error);
     }
   };
-  
 
   const deleteDocument = async (id) => {
-    deleteExpensesByPocketId(id)
+    deleteExpensesByPocketId(id);
     const response = await axios.delete(`http://localhost:3000/pockets/${id}`);
     if (response.status == 200) {
       Alert.alert("delete pockets successful", "", [
@@ -81,24 +81,11 @@ export default function PocketExpensesScreen(props) {
     ]);
   };
 
-  // const deleteExpensesByPocketId = async () => {
-  //   try {
-  //     const q = query(expensesRef, where('pocketId', '==', id));
-  
-  //     const querySnapshot = await getDocs(q);
-  
-  //     querySnapshot.forEach(async (doc) => {
-  //       await deleteDoc(doc.ref);
-  //     });
-  //   } catch (error) {
-  //     console.error('Error deleting documents: ', error);
-  //   }
-  // };
-
   useEffect(() => {
     if (isFocused) {
       fetchExpenses(id);
-      // fetchPocket();
+      fetchPocket(id);
+      // console.log(pockets);
     }
   }, [isFocused]);
 
@@ -116,20 +103,28 @@ export default function PocketExpensesScreen(props) {
                 {pocket_name}
               </Text>
               <Text className={`${colors.heading} text-base pl-14`}>
-                {/* {`฿ ${
-                  pockets.length > 0
-                    ? pockets[0].pocket_balance
-                    : "Loading..."
-                }`} */}
-                {`฿ ${pocket_balance}`}
+                {`฿ ${
+                  pockets.length > 0 ? pockets[0].pocket_balance : "Loading..."
+                }`}
               </Text>
             </View>
-            <TouchableOpacity
-              onPress={() => buttonDeletePocket()} //มาเขียนfunction ลบ pocket ต่อ
-              className="mr-3 mt-3"
-            >
-              <TrashIcon size="25" color="black" />
-            </TouchableOpacity>
+            <View className="flex-row">
+              <View className="mr-3 mt-3">
+                <ArrowUpTrayIcon
+                  onPress={() =>
+                    navigation.navigate("SelectPocket", { id, pocket_balance, pocket_name })
+                  }
+                  size="28"
+                  color="black"
+                />
+              </View>
+              <TouchableOpacity
+                onPress={() => buttonDeletePocket()} //มาเขียนfunction ลบ pocket ต่อ
+                className="mr-3 mt-3"
+              >
+                <TrashIcon size="25" color="black" />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
         <View className="flex-row justify-center items-center rounded-xl mb-4">
@@ -141,7 +136,9 @@ export default function PocketExpensesScreen(props) {
               Expenses
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("AddExpense", { id })}
+              onPress={() =>
+                navigation.navigate("AddExpense", { id, pocket_name })
+              }
               className="p-2 px-3 bg-white border border-gray-200 rounded-full"
             >
               <Text className={colors.heading}>Add Expenses</Text>
