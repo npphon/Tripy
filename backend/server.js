@@ -69,6 +69,19 @@ app.get("/pockets", (req, res) => {
   });
 });
 
+app.get("/sumAllPockets", (req, res) => {
+  const query = "SELECT SUM(pocket_balance) as total FROM pockets";
+
+  db.all(query, (err, rows) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
 // Define a route to fetch data from SQLite
 app.get("/pockets/not/:id", (req, res) => {
   const id = parseInt(req.params.id);

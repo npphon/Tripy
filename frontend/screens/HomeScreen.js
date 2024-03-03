@@ -16,6 +16,7 @@ export default function HomeScreen() {
 
   const [pockets, setPockets] = useState([]);
   const [cashbox, setCashbox] = useState([]);
+  const [sumAllPockets, setSumAllPockets] = useState([])
 
   const isFocused = useIsFocused();
 
@@ -37,9 +38,18 @@ export default function HomeScreen() {
     }
   };
 
+  const fetchSumAllPockets = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/sumAllPockets");
+      setSumAllPockets(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
     if (isFocused) fetchCashbox();
-    // console.log(cashbox);
+    fetchSumAllPockets();
     fetchPockets();
   }, [isFocused]);
 
@@ -135,6 +145,14 @@ export default function HomeScreen() {
               );
             }}
           />
+          <View className="justify-between bg-blue-200 rounded-xl mx-4 mb-4 p-4">
+        <Text className="pb-1">ยอดเงินในบัญชี</Text>
+          <Text className="text-base">
+            {`฿ ${
+              sumAllPockets.length > 0 ? sumAllPockets[0].total : "Loading..."
+            }`}
+          </Text>
+      </View>
         </View>
       </View>
     </ScreenWrapper>
