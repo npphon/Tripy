@@ -16,7 +16,7 @@ import axios from "axios";
 
 export default function AddPocketScreen() {
   const [pocketName, setPocketName] = useState("");
-  // const [amount, setAmount] = useState(0);
+  const [target, setTarget] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
@@ -27,6 +27,7 @@ export default function AddPocketScreen() {
         setLoading(true);
         const response = await axios.post("http://localhost:3000/pockets", {
           pocket_name: pocketName,
+          target: target,
         });
         setLoading(false);
         if (response.status === 201) {
@@ -76,6 +77,15 @@ export default function AddPocketScreen() {
             <TextInput
               value={pocketName}
               onChangeText={(value) => setPocketName(value)}
+              className="p-4 bg-white rounded-full mb-3"
+            />
+            <Text className={`${colors.heading} text-lg font-bold`}>
+              target
+            </Text>
+            <TextInput
+              value={target}
+              keyboardType="number-pad"
+              onChangeText={(value) => setTarget(value)}
               className="p-4 bg-white rounded-full mb-3"
             />
           </View>

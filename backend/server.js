@@ -113,7 +113,7 @@ app.get("/pockets/:id", (req, res) => {
 });
 
 app.post("/pockets", (req, res) => {
-  const { pocket_name } = req.body;
+  const { pocket_name, target } = req.body;
   console.log("Request Body:", req.body);
 
   if (!req.body) {
@@ -127,16 +127,16 @@ app.post("/pockets", (req, res) => {
   }
 
   const query =
-    "INSERT INTO pockets (pocket_name, pocket_balance) VALUES ($1, 0)";
+    "INSERT INTO pockets (pocket_name, pocket_balance, target) VALUES ($1, 0, $2)";
 
-  db.run(query, [pocket_name], function (err) {
+  db.run(query, [pocket_name,target], function (err) {
     if (err) {
       console.error(err);
       return res.status(500).send("Internal Server Error");
     }
 
     const newPocketId = this.lastID;
-    res.status(201).json({ id: newPocketId, pocket_name });
+    res.status(201).json({ id: newPocketId, pocket_name, target });
   });
 });
 

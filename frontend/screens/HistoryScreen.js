@@ -13,11 +13,9 @@ import EmptyList from "../components/emptyList";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import BackButton from "../components/backButton";
 import ExpenseCard from "../components/expenseCard";
-import { TrashIcon } from "react-native-heroicons/outline";
-import { ArrowUpTrayIcon } from "react-native-heroicons/outline";
 import axios from "axios";
 
-export default function PocketExpensesScreen(props) {
+export default function HistoryScreen(props) {
   const { id, pocket_balance, pocket_name, target } = props.route.params;
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -42,45 +40,6 @@ export default function PocketExpensesScreen(props) {
     }
   };
 
-  const deleteExpensesByPocketId = async (id) => {
-    try {
-      const response = await axios.delete(
-        `http://localhost:3000/pockets/expenses/${id}`
-      );
-    } catch (error) {
-      console.error("Error delete expense:", error);
-    }
-  };
-
-  const deleteDocument = async (id) => {
-    deleteExpensesByPocketId(id);
-    const response = await axios.delete(`http://localhost:3000/pockets/${id}`);
-    if (response.status == 200) {
-      Alert.alert("delete pockets successful", "", [
-        {
-          text: "ok",
-        },
-      ]);
-      navigation.goBack();
-    } else {
-      //show error
-      Alert.alert("delete pockets unsuccessful", "", [
-        {
-          text: "ok",
-        },
-      ]);
-    }
-  };
-
-  const buttonDeletePocket = async () => {
-    Alert.alert("Are you sure?", "", [
-      {
-        text: "Cancel",
-      },
-      { text: "delete pocket", onPress: () => deleteDocument(id) },
-    ]);
-  };
-
   useEffect(() => {
     if (isFocused) {
       fetchExpenses(id);
@@ -103,45 +62,14 @@ export default function PocketExpensesScreen(props) {
                 {pocket_name}
               </Text>
               <View>
-                {target ? (
-                  <Text className={`${colors.heading} text-base pl-14`}>
-                    {`฿ ${
-                      pockets.length > 0
-                        ? pockets[0].pocket_balance
-                        : "Loading..."
-                    } / ${target}`}
-                  </Text>
-                ) : (
-                  <Text className={`${colors.heading} text-base pl-14`}>
-                    {`฿ ${
-                      pockets.length > 0
-                        ? pockets[0].pocket_balance
-                        : "Loading..."
-                    }`}
-                  </Text>
-                )}
+                <Text className={`${colors.heading} text-base pl-14`}>
+                  {`฿ ${
+                    pockets.length > 0
+                      ? pockets[0].pocket_balance
+                      : "Loading..."
+                  }`}
+                </Text>
               </View>
-            </View>
-            <View className="flex-row">
-              <View className="mr-3 mt-3">
-                <ArrowUpTrayIcon
-                  onPress={() =>
-                    navigation.navigate("SelectPocket", {
-                      id,
-                      pocket_balance,
-                      pocket_name,
-                    })
-                  }
-                  size="28"
-                  color="black"
-                />
-              </View>
-              <TouchableOpacity
-                onPress={() => buttonDeletePocket()} //มาเขียนfunction ลบ pocket ต่อ
-                className="mr-3 mt-3"
-              >
-                <TrashIcon size="25" color="black" />
-              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -151,16 +79,8 @@ export default function PocketExpensesScreen(props) {
         <View className="space-y-3">
           <View className="flex-row justify-between items-center">
             <Text className={`${colors.heading} font-bold text-xl`}>
-              Expenses
+              History
             </Text>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("AddExpense", { id, pocket_name })
-              }
-              className="p-2 px-3 bg-white border border-gray-200 rounded-full"
-            >
-              <Text className={colors.heading}>Add Expenses</Text>
-            </TouchableOpacity>
           </View>
           <View style={{ height: "84%" }}>
             <FlatList

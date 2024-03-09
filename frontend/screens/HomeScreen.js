@@ -16,7 +16,7 @@ export default function HomeScreen() {
 
   const [pockets, setPockets] = useState([]);
   const [cashbox, setCashbox] = useState([]);
-  const [sumAllPockets, setSumAllPockets] = useState([])
+  const [sumAllPockets, setSumAllPockets] = useState([]);
 
   const isFocused = useIsFocused();
 
@@ -69,7 +69,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
       <View className="justify-center bg-blue-200 rounded-xl mx-4 mb-4 p-6">
-        <Text className="mb-4">Cashbox</Text>
+        <Text className="mb-4 font-bold text-lg">Cashbox</Text>
         <View className="flex-row justify-between items-center">
           <Text className="text-base">
             {`฿ ${
@@ -79,7 +79,7 @@ export default function HomeScreen() {
           <View className="flex-row">
             <View className="p-2">
               <ArrowUpTrayIcon
-                onPress={() => navigation.navigate("SelectPocket", cashbox[0] )}
+                onPress={() => navigation.navigate("SelectPocket", cashbox[0])}
                 size="28"
                 color="black"
               />
@@ -92,13 +92,26 @@ export default function HomeScreen() {
               />
             </View>
             <View className="ml-2 p-2">
-            <ClockIcon
-                onPress={() => navigation.navigate("PocketExpenses", {id: 1 , pocket_name: "Cashbox"})}
+              <ClockIcon
+                onPress={() =>
+                  navigation.navigate("History", {
+                    id: 1,
+                    pocket_name: "Cashbox",
+                  })
+                }
                 size="28"
                 color="black"
               />
             </View>
           </View>
+        </View>
+        <View className="flex-row items-center">
+          <Text className="font-bold text-base">ยอดเงินในบัญชี: </Text>
+          <Text className="text-base">
+            {`฿ ${
+              sumAllPockets.length > 0 ? sumAllPockets[0].total : "Loading..."
+            }`}
+          </Text>
         </View>
       </View>
       <View className="px-4 space-y-3">
@@ -137,22 +150,30 @@ export default function HomeScreen() {
                     <Text className={`${colors.heading} font-bold`}>
                       {item.pocket_name}
                     </Text>
-                    <Text
-                      className={`${colors.heading} text-xs`}
-                    >{`฿ ${item.pocket_balance}`}</Text>
+                    <View>
+                      {item.target ? (
+                        <Text className={`${colors.heading} text-xs`}>
+                          {`฿ ${item.pocket_balance} / ${item.target}`}
+                        </Text>
+                      ) : (
+                        <Text className={`${colors.heading} text-xs`}>
+                          {`฿ ${item.pocket_balance}`}
+                        </Text>
+                      )}
+                    </View>
                   </View>
                 </TouchableOpacity>
               );
             }}
           />
-          <View className="justify-between bg-blue-200 rounded-xl mx-4 mb-4 p-4">
-        <Text className="pb-1">ยอดเงินในบัญชี</Text>
-          <Text className="text-base">
-            {`฿ ${
-              sumAllPockets.length > 0 ? sumAllPockets[0].total : "Loading..."
-            }`}
-          </Text>
-      </View>
+          {/* <View className="justify-between bg-blue-200 rounded-xl mx-4 mb-4 p-4">
+            <Text className="pb-1">ยอดเงินในบัญชี</Text>
+            <Text className="text-base">
+              {`฿ ${
+                sumAllPockets.length > 0 ? sumAllPockets[0].total : "Loading..."
+              }`}
+            </Text>
+          </View> */}
         </View>
       </View>
     </ScreenWrapper>
