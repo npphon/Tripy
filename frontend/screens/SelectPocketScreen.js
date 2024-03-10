@@ -2,14 +2,14 @@ import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import ScreenWrapper from "../components/screenWrapper";
 import { colors } from "../theme";
-import randomImage from "../assets/images/randomImage";
+import selectImage from "../assets/images/selectImage";
 import EmptyList from "../components/emptyList";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import axios from "axios";
 
 export default function SelectPocketScreen(props) {
   const navigation = useNavigation();
-  const { id :excludedId, pocket_balance: excludedBalance, pocket_name: excludedName } = props.route.params;
+  const { id :excludedId, pocket_balance: excludedBalance, pocket_name: excludedName, pocket_type:excludedType } = props.route.params;
   // console.log(excludedId, excludedBalance, excludedName);
   const [pockets, setPockets] = useState([]);
   const [cashbox, setCashbox] = useState([]);
@@ -74,7 +74,7 @@ export default function SelectPocketScreen(props) {
                   className="bg-white p-3 rounded-2xl mb-3"
                 >
                   <View className="flex-row">
-                    <Image className="w-20 h-20 mb-2" source={randomImage()} />
+                    <Image className="w-20 h-20 mb-2" source={selectImage(item.pocket_type)} />
                     <View className="justify-center ml-6">
                       <Text className={`${colors.heading} text-lg font-bold`}>
                         {item.pocket_name}

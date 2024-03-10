@@ -18,7 +18,7 @@ import { ArrowUpTrayIcon } from "react-native-heroicons/outline";
 import axios from "axios";
 
 export default function PocketExpensesScreen(props) {
-  const { id, pocket_balance, pocket_name, target } = props.route.params;
+  const { id, pocket_balance, pocket_name, target, pocket_type } = props.route.params;
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const [expenses, setExpenses] = useState([]);
@@ -53,7 +53,7 @@ export default function PocketExpensesScreen(props) {
   };
 
   const deleteDocument = async (id) => {
-    deleteExpensesByPocketId(id);
+    const deleteExpense = await deleteExpensesByPocketId(id);
     const response = await axios.delete(`http://localhost:3000/pockets/${id}`);
     if (response.status == 200) {
       Alert.alert("delete pockets successful", "", [
@@ -130,6 +130,7 @@ export default function PocketExpensesScreen(props) {
                       id,
                       pocket_balance,
                       pocket_name,
+                      pocket_type
                     })
                   }
                   size="28"
@@ -137,7 +138,7 @@ export default function PocketExpensesScreen(props) {
                 />
               </View>
               <TouchableOpacity
-                onPress={() => buttonDeletePocket()} //มาเขียนfunction ลบ pocket ต่อ
+                onPress={() => buttonDeletePocket()}
                 className="mr-3 mt-3"
               >
                 <TrashIcon size="25" color="black" />

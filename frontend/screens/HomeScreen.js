@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import ScreenWrapper from "../components/screenWrapper";
 import { colors } from "../theme";
-import randomImage from "../assets/images/randomImage";
+import selectImage from "../assets/images/selectImage";
 import EmptyList from "../components/emptyList";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { PlusCircleIcon } from "react-native-heroicons/outline";
@@ -146,7 +146,7 @@ export default function HomeScreen() {
                   className="bg-white p-3 rounded-2xl mb-3"
                 >
                   <View>
-                    <Image className="w-36 h-36 mb-2" source={randomImage()} />
+                    <Image className="w-36 h-36 mb-2" source={selectImage(item.pocket_type)} />
                     <Text className={`${colors.heading} font-bold`}>
                       {item.pocket_name}
                     </Text>
