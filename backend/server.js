@@ -113,8 +113,8 @@ app.get("/pockets/:id", (req, res) => {
 });
 
 app.post("/pockets", (req, res) => {
-  const { pocket_name } = req.body;
-  console.log("Request Body:", req.body);
+  const { pocket_name, target, pocket_type } = req.body;
+  console.log("created pocket:", req.body);
 
   if (!req.body) {
     return res.status(400).json({ error: "Invalid request body" });
@@ -127,16 +127,16 @@ app.post("/pockets", (req, res) => {
   }
 
   const query =
-    "INSERT INTO pockets (pocket_name, pocket_balance) VALUES ($1, 0)";
+    "INSERT INTO pockets (pocket_name, pocket_balance, target, pocket_type) VALUES ($1, 0, $2, $3)";
 
-  db.run(query, [pocket_name], function (err) {
+  db.run(query, [pocket_name,target,pocket_type], function (err) {
     if (err) {
       console.error(err);
       return res.status(500).send("Internal Server Error");
     }
 
     const newPocketId = this.lastID;
-    res.status(201).json({ id: newPocketId, pocket_name });
+    res.status(201).json({ id: newPocketId, pocket_name, target, pocket_type });
   });
 });
 
@@ -312,14 +312,14 @@ app.delete("/pockets/expenses/:id", (req, res) => {
   const removeExpense = `DELETE FROM expenses WHERE pocket_id = ${id}`;
 
   db.all(getExpenseById, (err, rows) => {
-    const noExpenseFound = !rows.length;
-    if (noExpenseFound) {
-      console.error(err);
-      return res.status(400).send("expense doesn't exist in database");
-    }
+    // const noExpenseFound = !rows.length;
+    // if (noExpenseFound) {
+    //   console.error("pocketEx",err);
+    //   return res.status(400).send("expense doesn't exist in database");
+    // }
     db.run(removeExpense, function (err) {
       if (err) {
-        console.error(err);
+        console.error("pocex",err);
         return res.status(500).send("Internal Server Error");
       }
       res.status(200).send("expense removed Successfully!");

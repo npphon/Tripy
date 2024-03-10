@@ -18,7 +18,7 @@ import { ArrowUpTrayIcon } from "react-native-heroicons/outline";
 import axios from "axios";
 
 export default function PocketExpensesScreen(props) {
-  const { id, pocket_balance, pocket_name } = props.route.params;
+  const { id, pocket_balance, pocket_name, target, pocket_type } = props.route.params;
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const [expenses, setExpenses] = useState([]);
@@ -53,7 +53,7 @@ export default function PocketExpensesScreen(props) {
   };
 
   const deleteDocument = async (id) => {
-    deleteExpensesByPocketId(id);
+    const deleteExpense = await deleteExpensesByPocketId(id);
     const response = await axios.delete(`http://localhost:3000/pockets/${id}`);
     if (response.status == 200) {
       Alert.alert("delete pockets successful", "", [
@@ -102,24 +102,43 @@ export default function PocketExpensesScreen(props) {
                 {/* {pockets.length > 0 ? pockets[0].pocket_name : "Loading" } */}
                 {pocket_name}
               </Text>
-              <Text className={`${colors.heading} text-base pl-14`}>
-                {`฿ ${
-                  pockets.length > 0 ? pockets[0].pocket_balance : "Loading..."
-                }`}
-              </Text>
+              <View>
+                {target ? (
+                  <Text className={`${colors.heading} text-base pl-14`}>
+                    {`฿ ${
+                      pockets.length > 0
+                        ? pockets[0].pocket_balance
+                        : "Loading..."
+                    } / ${target}`}
+                  </Text>
+                ) : (
+                  <Text className={`${colors.heading} text-base pl-14`}>
+                    {`฿ ${
+                      pockets.length > 0
+                        ? pockets[0].pocket_balance
+                        : "Loading..."
+                    }`}
+                  </Text>
+                )}
+              </View>
             </View>
             <View className="flex-row">
               <View className="mr-3 mt-3">
                 <ArrowUpTrayIcon
                   onPress={() =>
-                    navigation.navigate("SelectPocket", { id, pocket_balance, pocket_name })
+                    navigation.navigate("SelectPocket", {
+                      id,
+                      pocket_balance,
+                      pocket_name,
+                      pocket_type
+                    })
                   }
                   size="28"
                   color="black"
                 />
               </View>
               <TouchableOpacity
-                onPress={() => buttonDeletePocket()} //มาเขียนfunction ลบ pocket ต่อ
+                onPress={() => buttonDeletePocket()}
                 className="mr-3 mt-3"
               >
                 <TrashIcon size="25" color="black" />

@@ -13,10 +13,12 @@ import { colors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
 import Loading from "../components/loading";
 import axios from "axios";
+import { pocketType } from "../constants/pocketType";
 
 export default function AddPocketScreen() {
   const [pocketName, setPocketName] = useState("");
-  // const [amount, setAmount] = useState(0);
+  const [target, setTarget] = useState("");
+  const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
@@ -27,6 +29,8 @@ export default function AddPocketScreen() {
         setLoading(true);
         const response = await axios.post("http://localhost:3000/pockets", {
           pocket_name: pocketName,
+          target: target,
+          pocket_type: category,
         });
         setLoading(false);
         if (response.status === 201) {
@@ -78,6 +82,33 @@ export default function AddPocketScreen() {
               onChangeText={(value) => setPocketName(value)}
               className="p-4 bg-white rounded-full mb-3"
             />
+            <Text className={`${colors.heading} text-lg font-bold`}>
+              target
+            </Text>
+            <TextInput
+              value={target}
+              keyboardType="number-pad"
+              onChangeText={(value) => setTarget(value)}
+              className="p-4 bg-white rounded-full mb-3"
+            />
+          </View>
+          <View className="mx-2">
+            <Text className="text-lg font-bold">Category</Text>
+            <View className="flex-row flex-wrap items-center">
+              {pocketType.map((cat) => {
+                let bgColor = "bg-white";
+                if (cat.value == category) bgColor = "bg-green-200";
+                return (
+                  <TouchableOpacity
+                    onPress={() => setCategory(cat.value)}
+                    key={cat.value}
+                    className={`rounded-full ${bgColor} px-4 p-3 mb-2 mr-2`}
+                  >
+                    <Text className="font-bold">{cat.title}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
         </View>
 
