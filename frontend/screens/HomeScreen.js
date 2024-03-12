@@ -57,7 +57,7 @@ export default function HomeScreen() {
     <ScreenWrapper className="flex-1">
       <View className="flex-row justify-between items-center p-4">
         <Text className={`${colors.heading} font-bold text-3xl`}>
-          Split Pocket
+          My manage
         </Text>
         <TouchableOpacity className="p-2 px-3 bg-white border border-gray-200 rounded-full">
           <Text
@@ -68,8 +68,18 @@ export default function HomeScreen() {
           </Text>
         </TouchableOpacity>
       </View>
-      <View className="justify-center bg-blue-200 rounded-xl mx-4 mb-4 p-6">
-        <Text className="mb-4 font-bold text-lg">Cashbox</Text>
+      <View className="justify-center bg-blue-200 rounded-xl mx-4 mb-4 p-4">
+        <View className="flex-row items-center">
+          <Text className="font-bold text-base">ยอดเงินในบัญชี: </Text>
+          <Text className="text-base">
+            {`฿ ${
+              sumAllPockets.length > 0 ? sumAllPockets[0].total : "Loading..."
+            }`}
+          </Text>
+        </View>
+      </View>
+      <View className="justify-center bg-blue-200 rounded-xl mx-4 mb-4 p-4">
+        <Text className="mb-0 font-bold text-lg">Cashbox</Text>
         <View className="flex-row justify-between items-center">
           <Text className="text-base">
             {`฿ ${
@@ -105,14 +115,6 @@ export default function HomeScreen() {
             </View>
           </View>
         </View>
-        <View className="flex-row items-center">
-          <Text className="font-bold text-base">ยอดเงินในบัญชี: </Text>
-          <Text className="text-base">
-            {`฿ ${
-              sumAllPockets.length > 0 ? sumAllPockets[0].total : "Loading..."
-            }`}
-          </Text>
-        </View>
       </View>
       <View className="px-4 space-y-3">
         <View className="flex-row justify-between items-center">
@@ -146,7 +148,10 @@ export default function HomeScreen() {
                   className="bg-white p-3 rounded-2xl mb-3"
                 >
                   <View>
-                    <Image className="w-36 h-36 mb-2" source={selectImage(item.pocket_type)} />
+                    <Image
+                      className="w-36 h-36 mb-2"
+                      source={selectImage(item.pocket_type)}
+                    />
                     <Text className={`${colors.heading} font-bold`}>
                       {item.pocket_name}
                     </Text>
