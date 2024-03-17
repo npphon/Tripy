@@ -33,6 +33,7 @@ export default function PocketExpensesScreen(props) {
     }
   };
 
+  // get expenses by pocket_id
   const fetchExpenses = async (id) => {
     try {
       const response = await axios.get(`http://localhost:3000/expenses/${id}`);
