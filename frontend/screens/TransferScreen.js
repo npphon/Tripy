@@ -2,8 +2,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
-  FlatList,
   TextInput,
   Alert,
 } from "react-native";

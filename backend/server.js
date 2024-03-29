@@ -16,7 +16,11 @@ app.get("/", (req, res) => {
 app.use(cors());
 
 app.get("/beginningBalance", (req, res) => {
-  const query = "SELECT * FROM beginningBalance";
+  const { month, year } = req.query;
+  console.log(month);
+  console.log(year);
+
+  const query = `SELECT balance FROM beginningBalance where month = ${month} and year = ${year}`;
 
   db.all(query, (err, rows) => {
     if (err) {
@@ -262,6 +266,21 @@ app.post("/moveMoney", (req, res) => {
 //========================= Expenses ==========================
 app.get("/expenses", (req, res) => {
   const query = "SELECT * FROM expenses";
+
+  db.all(query, (err, rows) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
+app.get("/expensesByTime", (req, res) => {
+  const { month, year } = req.query;
+  const query =
+    `SELECT * FROM expenses WHERE strftime('%Y-%m', create_at) = '${year}-${month}'`
 
   db.all(query, (err, rows) => {
     if (err) {

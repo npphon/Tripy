@@ -86,7 +86,7 @@ export default function PocketExpensesScreen(props) {
     if (isFocused) {
       fetchExpenses(id);
       fetchPocket(id);
-      // console.log(pockets);
+      console.log(expenses);
     }
   }, [isFocused]);
 

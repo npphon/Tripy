@@ -12,6 +12,8 @@ import AddCashboxScreen from "../screens/AddCashboxScreen"
 import SelectPocketScreen from "../screens/SelectPocketScreen"
 import TransferScreen from "../screens/TransferScreen"
 import HistoryScreen from "../screens/HistoryScreen"
+import RequestStatementScreen from "../screens/RequestStatementScreen"
+import StatementScreen from "../screens/StatementScreen"
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +31,8 @@ export default function AppNavigation() {
         <Stack.Screen options={{headerShown: false}} name="AddCashbox" component={AddCashboxScreen} />
         <Stack.Screen options={{headerShown: false}} name="SelectPocket" component={SelectPocketScreen} />
         <Stack.Screen options={{headerShown: false}} name="Transfer" component={TransferScreen} />
+        <Stack.Screen options={{headerShown: false}} name="RequestStatement" component={RequestStatementScreen} />
+        <Stack.Screen options={{headerShown: false}} name="Statement" component={StatementScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

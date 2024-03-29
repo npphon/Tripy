@@ -6,7 +6,6 @@ import { colors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
 import { categories } from "../constants/index";
 import { Alert } from "react-native";
-import { pocketRef } from "../config/firebase";
 import Loading from "../components/loading";
 import axios from "axios";
 
