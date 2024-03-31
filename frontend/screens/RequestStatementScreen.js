@@ -14,7 +14,6 @@ import BackButton from "../components/backButton";
 import Loading from "../components/loading";
 import axios from "axios";
 import { Dropdown } from "react-native-element-dropdown";
-import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function RequestStatementScreen() {
   const navigation = useNavigation();

@@ -17,10 +17,17 @@ app.use(cors());
 
 app.get("/beginningBalance", (req, res) => {
   const { month, year } = req.query;
-  console.log(month);
-  console.log(year);
+  console.log("begin", month);
+  console.log("begin", year);
 
-  const query = `SELECT balance FROM beginningBalance where month = ${month} and year = ${year}`;
+  let query;
+  if (parseInt(month) === 1) {
+    const previousYear = parseInt(year) - 1;
+    query = `SELECT * FROM beginningBalance WHERE month = 12 AND year = ${previousYear}`;
+  } else {
+    const previousMonth = parseInt(month) - 1;
+    query = `SELECT * FROM beginningBalance WHERE month = ${previousMonth} AND year = ${year}`;
+  }
 
   db.all(query, (err, rows) => {
     if (err) {
@@ -279,8 +286,7 @@ app.get("/expenses", (req, res) => {
 
 app.get("/expensesByTime", (req, res) => {
   const { month, year } = req.query;
-  const query =
-    `SELECT * FROM expenses WHERE strftime('%Y-%m', create_at) = '${year}-${month}'`
+  const query = `SELECT * FROM expenses WHERE strftime('%Y-%m', create_at) = '${year}-${month}' AND title NOT LIKE '%ย้ายเงินจาก%';`;
 
   db.all(query, (err, rows) => {
     if (err) {
