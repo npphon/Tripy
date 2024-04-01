@@ -8,6 +8,7 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { PlusCircleIcon } from "react-native-heroicons/outline";
 import { ArrowDownTrayIcon } from "react-native-heroicons/outline";
 import { ArrowUpTrayIcon } from "react-native-heroicons/outline";
+import { DocumentTextIcon } from "react-native-heroicons/outline";
 import { ClockIcon } from "react-native-heroicons/outline";
 import axios from "axios";
 
@@ -79,7 +80,9 @@ export default function HomeScreen() {
         </View>
       </View>
       <View className="justify-center bg-blue-200 rounded-xl mx-4 mb-4 p-4">
-        <Text className="mb-0 font-bold text-lg">Cashbox</Text>
+        <View className="flex-row justify-between">
+          <Text className="mb-0 font-bold text-lg">Cashbox</Text>
+        </View>
         <View className="flex-row justify-between items-center">
           <Text className="text-base">
             {`฿ ${
@@ -109,6 +112,13 @@ export default function HomeScreen() {
                     pocket_name: "Cashbox",
                   })
                 }
+                size="28"
+                color="black"
+              />
+            </View>
+            <View className="p-2">
+              <DocumentTextIcon
+                onPress={() => navigation.navigate("RequestStatement")}
                 size="28"
                 color="black"
               />
@@ -171,14 +181,6 @@ export default function HomeScreen() {
               );
             }}
           />
-          {/* <View className="justify-between bg-blue-200 rounded-xl mx-4 mb-4 p-4">
-            <Text className="pb-1">ยอดเงินในบัญชี</Text>
-            <Text className="text-base">
-              {`฿ ${
-                sumAllPockets.length > 0 ? sumAllPockets[0].total : "Loading..."
-              }`}
-            </Text>
-          </View> */}
         </View>
       </View>
     </ScreenWrapper>
