@@ -12,42 +12,46 @@ import BackButton from "../components/backButton";
 import { colors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
 import Loading from "../components/loading";
-import { addDoc } from "firebase/firestore";
-import { pocketRef } from "../config/firebase";
+import axios from "axios";
+import { pocketType } from "../constants/pocketType";
 
 export default function AddPocketScreen() {
   const [pocketName, setPocketName] = useState("");
-  const [amount, setAmount] = useState(0);
+  const [target, setTarget] = useState("");
+  const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
+
   const handleAddPocket = async () => {
     if (pocketName) {
-      //good to go
-      // navigation.navigate("Home");
-      setLoading(true);
-      let doc = await addDoc(pocketRef, {
-        pocketName,
-        amount,
-      });
-      setLoading(false);
-      if (doc && doc.id) {
-        Alert.alert("create pocket successful", "", [
-          {
-            text: "ok",
-          },
-        ]);
+      try {
+        setLoading(true);
+        const response = await axios.post("http://localhost:3000/pockets", {
+          pocket_name: pocketName,
+          target: target,
+          pocket_type: category,
+        });
+        setLoading(false);
+        if (response.status === 201) {
+          const data = response.data;
+          Alert.alert("Create pocket successful", "", [
+            { text: "OK", onPress: () => navigation.goBack() },
+          ]);
+        } else {
+          Alert.alert("Error creating pocket", "", [{ text: "OK" }]);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        Alert.alert("Error creating pocket", "", [{ text: "OK" }]);
       }
-      navigation.goBack();
     } else {
-      // show error
-      Alert.alert("Place and Country are required!", "", [
-        {
-          text: "ok",
-        },
+      Alert.alert("Pocket Name and Balance are required!", "", [
+        { text: "OK" },
       ]);
     }
   };
+
   return (
     <ScreenWrapper>
       <View className="flex justify-between h-full mx-4">
@@ -78,7 +82,33 @@ export default function AddPocketScreen() {
               onChangeText={(value) => setPocketName(value)}
               className="p-4 bg-white rounded-full mb-3"
             />
-            
+            <Text className={`${colors.heading} text-lg font-bold`}>
+              target
+            </Text>
+            <TextInput
+              value={target}
+              keyboardType="number-pad"
+              onChangeText={(value) => setTarget(value)}
+              className="p-4 bg-white rounded-full mb-3"
+            />
+          </View>
+          <View className="mx-2">
+            <Text className="text-lg font-bold">Category</Text>
+            <View className="flex-row flex-wrap items-center">
+              {pocketType.map((cat) => {
+                let bgColor = "bg-white";
+                if (cat.value == category) bgColor = "bg-green-200";
+                return (
+                  <TouchableOpacity
+                    onPress={() => setCategory(cat.value)}
+                    key={cat.value}
+                    className={`rounded-full ${bgColor} px-4 p-3 mb-2 mr-2`}
+                  >
+                    <Text className="font-bold">{cat.title}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
         </View>
 

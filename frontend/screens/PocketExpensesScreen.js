@@ -13,61 +13,75 @@ import EmptyList from "../components/emptyList";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import BackButton from "../components/backButton";
 import ExpenseCard from "../components/expenseCard";
-import { expensesRef, pocketRef } from "../config/firebase";
 import { TrashIcon } from "react-native-heroicons/outline";
-import {
-  doc,
-  getDocs,
-  query,
-  where,
-  getDoc,
-  orderBy,
-  deleteDoc,
-} from "firebase/firestore";
-import axios from 'axios';
+import { ArrowUpTrayIcon } from "react-native-heroicons/outline";
+import axios from "axios";
 
 export default function PocketExpensesScreen(props) {
-  // const { id } = props.route.params;
-  const { id, pocket_balance, pocket_name } = props.route.params;
+  const { id, pocket_balance, pocket_name, target, pocket_type } =
+    props.route.params;
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const [expenses, setExpenses] = useState([]);
   const [pockets, setPockets] = useState([]);
-  
-  const fetchExpenses = async (id) => {
+  // const [pocketBalance, setPocketBalance] = useState(0);
+
+  const fetchPocket = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:3000/expenses/${id}`);
-      setExpenses(response.data)
+      const response = await axios.get(`http://localhost:3000/pockets/${id}`);
+      setPockets(response.data);
     } catch (error) {
-      console.error('Error fetching pocket:', error);
+      console.error("Error fetching pocket:", error);
     }
   };
 
-  // const fetchExpenses = async () => {
-  //   const q = query(
-  //     expensesRef,
-  //     where("pocketId", "==", id),
-  //     orderBy("createAt", "desc")
-  //   );
-  //   const querySnapshot = await getDocs(q);
-  //   let data = [];
-  //   querySnapshot.forEach((doc) => {
-  //     // console.log(doc.data());
-  //     data.push({ ...doc.data(), id: doc.id });
-  //   });
-  //   setExpenses(data);
-  // };
+  // get expenses by pocket_id
+  const fetchExpenses = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/expenses/${id}`);
+      setExpenses(response.data);
+    } catch (error) {
+      console.error("Error fetching expense:", error);
+    }
+  };
 
-  // const fetchPocket = async () => {
-  //   const documentRef = doc(pocketRef, id);
-  //   const documentSnapshot = (await getDoc(documentRef)).data();
-  //   setPockets(documentSnapshot);
-  // };
 
-  const deleteDocument = async () => {
-    deleteExpensesByPocketId()
-    const docRef = await deleteDoc(doc(pocketRef, id));
-    if (!doc.id) {
+  const deleteExpensesByPocketId = async (id) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/expenses/pockets/${id}`
+      );
+    } catch (error) {
+      console.error("Error delete expense:", error);
+    }
+  };
+
+  const deleteExpensesByTransferPocketId = async (transfer_pocket_id) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/expenses/transfer/pocket/${transfer_pocket_id}`
+      );
+    } catch (error) {
+      console.error("Error delete expense:", error);
+    }
+  };
+
+  const refundToCashbox = async (pocket_balance) => {
+    try {
+      const response = await axios.patch("http://localhost:3000/cashbox/1", {
+          balance: pocket_balance,
+        });
+    } catch (error) {
+      console.error("Error refund to cashbox:", error);
+    }
+  };
+
+  const deletePocket = async (id) => {
+    refundToCashbox(pocket_balance);
+    const deleteExpense = await deleteExpensesByPocketId(id);
+    deleteExpensesByTransferPocketId(id)
+    const response = await axios.delete(`http://localhost:3000/pockets/${id}`);
+    if (response.status == 200) {
       Alert.alert("delete pockets successful", "", [
         {
           text: "ok",
@@ -85,32 +99,19 @@ export default function PocketExpensesScreen(props) {
   };
 
   const buttonDeletePocket = async () => {
-    Alert.alert("Are you sure?", "", [
+    Alert.alert("คุณแน่ใจใช่ไหมมว่าจะลบ Pocket นี้?", "ถ้าลบ Pocket ที่มีเงินอยู่ เงินจะถูกโอนเข้าสู่cashboxอัตโนมัติ", [
       {
         text: "Cancel",
       },
-      { text: "delete pocket", onPress: () => deleteDocument() },
+      { text: "ยืนยันการลบ", onPress: () => deletePocket(id) },
     ]);
-  };
-
-  const deleteExpensesByPocketId = async () => {
-    try {
-      const q = query(expensesRef, where('pocketId', '==', id));
-  
-      const querySnapshot = await getDocs(q);
-  
-      querySnapshot.forEach(async (doc) => {
-        await deleteDoc(doc.ref);
-      });
-    } catch (error) {
-      console.error('Error deleting documents: ', error);
-    }
   };
 
   useEffect(() => {
     if (isFocused) {
       fetchExpenses(id);
-      // fetchPocket();
+      fetchPocket(id);
+      console.log(expenses);
     }
   }, [isFocused]);
 
@@ -127,21 +128,48 @@ export default function PocketExpensesScreen(props) {
                 {/* {pockets.length > 0 ? pockets[0].pocket_name : "Loading" } */}
                 {pocket_name}
               </Text>
-              <Text className={`${colors.heading} text-base pl-14`}>
-                {/* {`฿ ${
-                  pockets.length > 0
-                    ? pockets[0].pocket_balance
-                    : "Loading..."
-                }`} */}
-                {`฿ ${pocket_balance}`}
-              </Text>
+              <View>
+                {target ? (
+                  <Text className={`${colors.heading} text-base pl-14`}>
+                    {`฿ ${
+                      pockets.length > 0
+                        ? pockets[0].pocket_balance
+                        : "Loading..."
+                    } / ${target}`}
+                  </Text>
+                ) : (
+                  <Text className={`${colors.heading} text-base pl-14`}>
+                    {`฿ ${
+                      pockets.length > 0
+                        ? pockets[0].pocket_balance
+                        : "Loading..."
+                    }`}
+                  </Text>
+                )}
+              </View>
             </View>
-            <TouchableOpacity
-              onPress={() => buttonDeletePocket()} //มาเขียนfunction ลบ pocket ต่อ
-              className="mr-3 mt-3"
-            >
-              <TrashIcon size="25" color="black" />
-            </TouchableOpacity>
+            <View className="flex-row">
+              <View className="mr-3 mt-3">
+                <ArrowUpTrayIcon
+                  onPress={() =>
+                    navigation.navigate("SelectPocket", {
+                      id,
+                      pocket_balance,
+                      pocket_name,
+                      pocket_type,
+                    })
+                  }
+                  size="28"
+                  color="black"
+                />
+              </View>
+              <TouchableOpacity
+                onPress={() => buttonDeletePocket()}
+                className="mr-3 mt-3"
+              >
+                <TrashIcon size="25" color="black" />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
         <View className="flex-row justify-center items-center rounded-xl mb-4">
@@ -153,7 +181,9 @@ export default function PocketExpensesScreen(props) {
               Expenses
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("AddExpense", { id })}
+              onPress={() =>
+                navigation.navigate("AddExpense", { id, pocket_name })
+              }
               className="p-2 px-3 bg-white border border-gray-200 rounded-full"
             >
               <Text className={colors.heading}>Add Expenses</Text>

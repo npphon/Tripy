@@ -6,16 +6,8 @@ import { colors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
 import { categories } from "../constants/index";
 import { Alert } from "react-native";
-import { expensesRef } from "../config/firebase";
-import { pocketRef } from "../config/firebase";
-import {
-  addDoc,
-  serverTimestamp,
-  updateDoc,
-  doc,
-  increment,
-} from "firebase/firestore";
 import Loading from "../components/loading";
+import axios from "axios";
 
 export default function AddExpenseScreen(props) {
   let { id } = props.route.params;
@@ -23,29 +15,24 @@ export default function AddExpenseScreen(props) {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
-
+  // console.log(id);
   const navigation = useNavigation();
 
   const handleAddExpense = async () => {
     if (title && amount && category) {
-      //good to go
-      // navigation.goBack();
-      const numAmount = (-parseInt(amount));
-      if (!isNaN(numAmount)) {
+      // const numAmount = (-parseInt(amount));
+      if (!isNaN(amount)) {
         setLoading(true);
-        let doc = await addDoc(expensesRef, {
-          title,
-          amount: numAmount,
-          category,
-          pocketId: id,
-          createAt: serverTimestamp(),
+        const response = await axios.post("http://localhost:3000/expenses", {
+          title: title,
+          amount: amount,
+          category: category,
+          pocket_id: id,
+          type: "expense"
         });
-        // const updatedData = {
-        //   amount: FieldValue.increment(numAmount),
-        // };
         updateAmountPocket(id);
         setLoading(false);
-        if (doc && doc.id) {
+        if (response.status == 201) {
           Alert.alert("add expense successful", "", [
             {
               text: "ok",
@@ -72,14 +59,13 @@ export default function AddExpenseScreen(props) {
   };
 
   const updateAmountPocket = async (id) => {
-    const docRef = doc(pocketRef, id);
-
     try {
-      await updateDoc(docRef, {
-        amount: increment(-parseInt(amount))
-      });
-    } catch (error) {
-      console.error("Error updating document:", error);
+      const response = await axios.patch(`http://localhost:3000/pocket/${id}`, {
+        pocket_balance: -amount,
+      });      
+      // setPockets(response.data);
+      } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
