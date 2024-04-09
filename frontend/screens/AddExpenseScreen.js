@@ -28,6 +28,7 @@ export default function AddExpenseScreen(props) {
           amount: amount,
           category: category,
           pocket_id: id,
+          type: "expense"
         });
         updateAmountPocket(id);
         setLoading(false);
@@ -60,7 +61,7 @@ export default function AddExpenseScreen(props) {
   const updateAmountPocket = async (id) => {
     try {
       const response = await axios.patch(`http://localhost:3000/pocket/${id}`, {
-        pocket_balance: amount,
+        pocket_balance: -amount,
       });      
       // setPockets(response.data);
       } catch (error) {

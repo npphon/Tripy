@@ -17,8 +17,7 @@ app.use(cors());
 
 app.get("/beginningBalance", (req, res) => {
   const { month, year } = req.query;
-  console.log("begin", month);
-  console.log("begin", year);
+  console.log("begin", month, year);
 
   let query;
   if (parseInt(month) === 1) {
@@ -39,16 +38,25 @@ app.get("/beginningBalance", (req, res) => {
   });
 });
 
-app.get("/cashbox", (req, res) => {
-  const query = "SELECT * FROM cashbox";
+app.patch("/beginningBalance", (req, res) => {
+  // const {  } = req.query;
+  const { month, year, amount } = req.body;
+  console.log("begin", month, year, amount);
 
-  db.all(query, (err, rows) => {
+  const updateBeginningBalance = `UPDATE beginningBalance
+              SET balance = balance + ${amount},
+              updated_at = (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime'))
+              WHERE month = ${month} AND year = ${year}`;
+  db.run(updateBeginningBalance, function (err) {
     if (err) {
       console.error(err);
-      res.status(500).send("Internal Server Error");
-    } else {
-      res.json(rows);
+      return res.status(500).send("Internal Server Error");
     }
+    console.log("beginningBalance update", {
+      month,
+      year,
+      amount,
+    });
   });
 });
 
@@ -106,22 +114,6 @@ app.get("/sumAllPockets", (req, res) => {
   });
 });
 
-// Define a route to fetch data from SQLite
-app.get("/pockets/not/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  console.log(id);
-  const query = `SELECT * FROM pockets WHERE NOT id = ${id}`;
-
-  db.all(query, (err, rows) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send("Internal Server Error");
-    } else {
-      res.json(rows);
-    }
-  });
-});
-
 app.get("/pockets/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const query = `SELECT * FROM pockets WHERE id = ${id}`;
@@ -164,6 +156,7 @@ app.post("/pockets", (req, res) => {
   });
 });
 
+//set ค่าใหม่เลย
 app.patch("/pockets/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const { pocket_name, pocket_balance } = req.body;
@@ -270,6 +263,44 @@ app.post("/moveMoney", (req, res) => {
   });
 });
 
+app.post("/expensesMoveMoney", (req, res) => {
+  const {
+    title,
+    amount,
+    category,
+    pocket_id,
+    type,
+    transfer_id,
+    transfer_pocket_id,
+  } = req.body;
+
+  const expensesQuery =
+    "INSERT INTO expenses (title, amount, category, pocket_id, type, transfer_id, transfer_pocket_id) VALUES ($1, $2, $3, $4, $5, $6, $7)";
+
+  db.run(
+    expensesQuery,
+    [title, amount, category, pocket_id, type, transfer_id, transfer_pocket_id],
+    function (err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Internal Server Error");
+      }
+
+      res
+        .status(201)
+        .json({
+          title,
+          amount,
+          category,
+          pocket_id,
+          type,
+          transfer_id,
+          transfer_pocket_id,
+        });
+    }
+  );
+});
+
 //========================= Expenses ==========================
 app.get("/expenses", (req, res) => {
   const query = "SELECT * FROM expenses";
@@ -286,7 +317,7 @@ app.get("/expenses", (req, res) => {
 
 app.get("/expensesByTime", (req, res) => {
   const { month, year } = req.query;
-  const query = `SELECT * FROM expenses WHERE strftime('%Y-%m', create_at) = '${year}-${month}' AND title NOT LIKE '%ย้ายเงินจาก%';`;
+  const query = `SELECT * FROM expenses WHERE strftime('%Y-%m', created_at) = '${year}-${month}' AND title NOT LIKE '%ย้ายเงินจาก%';`;
 
   db.all(query, (err, rows) => {
     if (err) {
@@ -327,7 +358,7 @@ app.get("/expenses/:pocket_id", (req, res) => {
 });
 
 app.post("/expenses", (req, res) => {
-  const { title, amount, category, pocket_id } = req.body;
+  const { title, amount, category, pocket_id, type } = req.body;
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth() + 1; // เดือนปัจจุบัน
   // const currentMonth = 4; // เดือนปัจจุบัน
@@ -366,7 +397,8 @@ app.post("/expenses", (req, res) => {
               amount,
             });
             const updateBeginningBalance = `UPDATE beginningBalance
-              SET balance = balance + ${amount} 
+              SET balance = balance + ${amount},
+              updated_at = (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime'))
               WHERE month = ${currentMonth} AND year = ${currentYear}`;
             db.run(updateBeginningBalance, function (err) {
               if (err) {
@@ -384,7 +416,8 @@ app.post("/expenses", (req, res) => {
       });
     } else {
       const updateBeginningBalance = `UPDATE beginningBalance
-        SET balance = balance + ${amount} 
+        SET balance = balance + ${amount},
+        updated_at = (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')) 
         WHERE month = ${currentMonth} AND year = ${currentYear}`;
       db.run(updateBeginningBalance, function (err) {
         if (err) {
@@ -401,19 +434,23 @@ app.post("/expenses", (req, res) => {
   });
 
   const expensesQuery =
-    "INSERT INTO expenses (title, amount, category, pocket_id) VALUES ($1, $2, $3, $4)";
+    "INSERT INTO expenses (title, amount, category, pocket_id, type) VALUES ($1, $2, $3, $4, $5)";
 
-  db.run(expensesQuery, [title, amount, category, pocket_id], function (err) {
-    if (err) {
-      console.error(err);
-      return res.status(500).send("Internal Server Error");
+  db.run(
+    expensesQuery,
+    [title, amount, category, pocket_id, type],
+    function (err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Internal Server Error");
+      }
+
+      res.status(201).json({ title, amount, category, pocket_id, type });
     }
-
-    res.status(201).json({ title, amount, category, pocket_id });
-  });
+  );
 });
 
-app.delete("/pockets/expenses/:id", (req, res) => {
+app.delete("/expenses/pockets/:id", (req, res) => {
   const id = parseInt(req.params.id);
 
   const getExpenseById = `SELECT * FROM expenses WHERE pocket_id = ${id}`;
@@ -428,7 +465,31 @@ app.delete("/pockets/expenses/:id", (req, res) => {
     // }
     db.run(removeExpense, function (err) {
       if (err) {
-        console.error("pocex", err);
+        console.error("pocke", err);
+        return res.status(500).send("Internal Server Error");
+      }
+      res.status(200).send("expense removed Successfully!");
+    });
+  });
+});
+
+app.delete("/expenses/transfer/pocket/:transfer_pocket_id", (req, res) => {
+  const transfer_pocket_id = parseInt(req.params.transfer_pocket_id);
+  console.log(transfer_pocket_id);
+
+  const getExpenseByTransferPocketId = `SELECT * FROM expenses WHERE transfer_pocket_id = ${transfer_pocket_id}`;
+
+  const removeExpense = `DELETE FROM expenses WHERE transfer_pocket_id = ${transfer_pocket_id}`;
+
+  db.all(getExpenseByTransferPocketId, (err, rows) => {
+    const noExpenseFound = !rows.length;
+    if (noExpenseFound) {
+      console.error(err);
+      return res.status(400).send("expense doesn't exist in database");
+    }
+    db.run(removeExpense, function (err) {
+      if (err) {
+        console.error(err);
         return res.status(500).send("Internal Server Error");
       }
       res.status(200).send("expense removed Successfully!");
@@ -442,6 +503,30 @@ app.delete("/expenses/:id", (req, res) => {
   const getExpenseById = `SELECT * FROM expenses WHERE id = ${id}`;
 
   const removeExpense = `DELETE FROM expenses WHERE id = ${id}`;
+
+  db.all(getExpenseById, (err, rows) => {
+    const noExpenseFound = !rows.length;
+    if (noExpenseFound) {
+      console.error(err);
+      return res.status(400).send("expense doesn't exist in database");
+    }
+    db.run(removeExpense, function (err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Internal Server Error");
+      }
+      res.status(200).send("expense removed Successfully!");
+    });
+  });
+});
+
+app.delete("/expenses/transfer/:transfer_id", (req, res) => {
+  const transfer_id = req.params.transfer_id;
+  console.log(transfer_id);
+
+  const getExpenseById = `SELECT * FROM expenses WHERE transfer_id = '${transfer_id}'`;
+
+  const removeExpense = `DELETE FROM expenses WHERE transfer_id = '${transfer_id}'`;
 
   db.all(getExpenseById, (err, rows) => {
     const noExpenseFound = !rows.length;

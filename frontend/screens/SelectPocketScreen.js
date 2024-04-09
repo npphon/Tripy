@@ -12,18 +12,18 @@ export default function SelectPocketScreen(props) {
   const { id :excludedId, pocket_balance: excludedBalance, pocket_name: excludedName, pocket_type:excludedType } = props.route.params;
   // console.log(excludedId, excludedBalance, excludedName);
   const [pockets, setPockets] = useState([]);
-  const [cashbox, setCashbox] = useState([]);
+  // const [cashbox, setCashbox] = useState([]);
 
   const isFocused = useIsFocused();
 
-  const fetchCashbox = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/cashbox");
-      setCashbox(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+  // const fetchCashbox = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:3000/cashbox");
+  //     setCashbox(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   }
+  // };
 
   const fetchPockets = async () => {
     try {
@@ -35,7 +35,7 @@ export default function SelectPocketScreen(props) {
   };
 
   useEffect(() => {
-    if (isFocused) fetchCashbox();
+    if (isFocused)
     fetchPockets();
   }, [isFocused]);
 

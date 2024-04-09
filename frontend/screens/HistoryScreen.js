@@ -58,7 +58,6 @@ export default function HistoryScreen(props) {
           <View className="border-b-2 pb-2 flex-row justify-between">
             <View>
               <Text className={`${colors.heading} text-xl font-bold pl-14`}>
-                {/* {pockets.length > 0 ? pockets[0].pocket_name : "Loading" } */}
                 {pocket_name}
               </Text>
               <View>

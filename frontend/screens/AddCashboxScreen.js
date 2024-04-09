@@ -50,6 +50,7 @@ export default function AddCashboxScreen() {
         amount: balance, 
         category: "other",
         pocket_id: 1,
+        type: 'income'
       });
     } catch (error) {
       console.error("Error fetching data:", error);

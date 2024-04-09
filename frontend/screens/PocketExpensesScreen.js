@@ -18,11 +18,13 @@ import { ArrowUpTrayIcon } from "react-native-heroicons/outline";
 import axios from "axios";
 
 export default function PocketExpensesScreen(props) {
-  const { id, pocket_balance, pocket_name, target, pocket_type } = props.route.params;
+  const { id, pocket_balance, pocket_name, target, pocket_type } =
+    props.route.params;
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const [expenses, setExpenses] = useState([]);
   const [pockets, setPockets] = useState([]);
+  // const [pocketBalance, setPocketBalance] = useState(0);
 
   const fetchPocket = async (id) => {
     try {
@@ -43,18 +45,41 @@ export default function PocketExpensesScreen(props) {
     }
   };
 
+
   const deleteExpensesByPocketId = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/pockets/expenses/${id}`
+        `http://localhost:3000/expenses/pockets/${id}`
       );
     } catch (error) {
       console.error("Error delete expense:", error);
     }
   };
 
-  const deleteDocument = async (id) => {
+  const deleteExpensesByTransferPocketId = async (transfer_pocket_id) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/expenses/transfer/pocket/${transfer_pocket_id}`
+      );
+    } catch (error) {
+      console.error("Error delete expense:", error);
+    }
+  };
+
+  const refundToCashbox = async (pocket_balance) => {
+    try {
+      const response = await axios.patch("http://localhost:3000/cashbox/1", {
+          balance: pocket_balance,
+        });
+    } catch (error) {
+      console.error("Error refund to cashbox:", error);
+    }
+  };
+
+  const deletePocket = async (id) => {
+    refundToCashbox(pocket_balance);
     const deleteExpense = await deleteExpensesByPocketId(id);
+    deleteExpensesByTransferPocketId(id)
     const response = await axios.delete(`http://localhost:3000/pockets/${id}`);
     if (response.status == 200) {
       Alert.alert("delete pockets successful", "", [
@@ -74,11 +99,11 @@ export default function PocketExpensesScreen(props) {
   };
 
   const buttonDeletePocket = async () => {
-    Alert.alert("Are you sure?", "", [
+    Alert.alert("คุณแน่ใจใช่ไหมมว่าจะลบ Pocket นี้?", "ถ้าลบ Pocket ที่มีเงินอยู่ เงินจะถูกโอนเข้าสู่cashboxอัตโนมัติ", [
       {
         text: "Cancel",
       },
-      { text: "delete pocket", onPress: () => deleteDocument(id) },
+      { text: "ยืนยันการลบ", onPress: () => deletePocket(id) },
     ]);
   };
 
@@ -131,7 +156,7 @@ export default function PocketExpensesScreen(props) {
                       id,
                       pocket_balance,
                       pocket_name,
-                      pocket_type
+                      pocket_type,
                     })
                   }
                   size="28"

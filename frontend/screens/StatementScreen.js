@@ -87,7 +87,7 @@ export default function StatementScreen(props) {
                         {item.amount >= 0 ? (
                           <View style={styles.row}>
                             <Text style={[styles.column, styles.dateColumn]}>
-                              {item.create_at}
+                              {item.created_at}
                             </Text>
                             <Text
                               style={[styles.column, styles.descriptionColumn]}
@@ -107,7 +107,7 @@ export default function StatementScreen(props) {
                         ) : (
                           <View style={styles.row}>
                             <Text style={[styles.column, styles.dateColumn]}>
-                              {item.create_at}
+                              {item.created_at}
                             </Text>
                             <Text
                               style={[styles.column, styles.descriptionColumn]}
@@ -160,7 +160,7 @@ export default function StatementScreen(props) {
                     <View style={[styles.row]}>
                       <Text style={[styles.column, styles.dateColumn]}>
                         {beginningBalance && beginningBalance.length > 0
-                          ? `${beginningBalance[0].year}-${beginningBalance[0].month}`
+                          ? `${beginningBalance[0].updated_at}`
                           : ""}
                       </Text>
                       <Text style={[styles.column, styles.descriptionColumn]}>

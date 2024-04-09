@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Alert,
-} from "react-native";
+import { View, Text, TouchableOpacity, TextInput, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import ScreenWrapper from "../components/screenWrapper";
 import { colors } from "../theme";
@@ -12,6 +6,7 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import BackButton from "../components/backButton";
 import Loading from "../components/loading";
 import axios from "axios";
+import UUIDGenerator from "react-native-uuid";
 
 export default function TransferScreen(props) {
   // const { id } = props.route.params;
@@ -33,16 +28,13 @@ export default function TransferScreen(props) {
           targetPocketId: id,
           amountToMove: amount,
         });
-        addExpense(excludedName,pocket_name,amount,id)
-        addExpense(excludedName,pocket_name,-amount,excludedId)
+        const uuid = UUIDGenerator.v4().substring(0, 8);
+        addExpense(excludedName, pocket_name, amount, id, "income", uuid, excludedId);
+        addExpense(excludedName, pocket_name, amount, excludedId, "expense", uuid, id);
         setLoading(false);
-        if (response.status === 200) {
-          Alert.alert("move money successful", "", [
-            { text: "OK", onPress: () => navigation.navigate("Home") },
-          ]);
-        } else {
-          Alert.alert("Error moving money", "", [{ text: "OK" }]);
-        }
+        Alert.alert("move money successful", "", [
+          { text: "OK", onPress: () => navigation.navigate("Home") },
+        ]);
       } catch (error) {
         console.error("Error:", error);
         Alert.alert("Error moving money", "", [{ text: "OK" }]);
@@ -52,13 +44,16 @@ export default function TransferScreen(props) {
     }
   };
 
-  const addExpense = async (from_pocket,to_pocket,amount,id) => {
+  const addExpense = async (from_pocket, to_pocket, amount, id, type, transfer_id, transfer_pocket_id) => {
     try {
-      const response = await axios.post("http://localhost:3000/expenses", {
+      const response = await axios.post("http://localhost:3000/expensesMoveMoney", {
         title: `ย้ายเงินจาก ${from_pocket} ไป ${to_pocket} สำเร็จ`,
-        amount: amount, 
+        amount: amount,
         category: "other",
         pocket_id: id,
+        type: type,
+        transfer_id: transfer_id,
+        transfer_pocket_id: transfer_pocket_id
       });
     } catch (error) {
       console.error("Error fetching data:", error);
