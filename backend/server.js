@@ -359,6 +359,14 @@ app.get("/expenses/:pocket_id", (req, res) => {
 
 app.post("/expenses", (req, res) => {
   const { title, amount, category, pocket_id, type } = req.body;
+  let updatedAmount = parseInt(amount);
+  if (type === "expense") {
+    updatedAmount = -amount; // ถ้าเป็น expense ให้ใส่ลบลงไปใน pocket_balance
+  } else if (type === "income") {
+    updatedAmount = amount; // ถ้าเป็น expense ให้ใส่ลบลงไปใน pocket_balance
+  }
+
+
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth() + 1; // เดือนปัจจุบัน
   // const currentMonth = 4; // เดือนปัจจุบัน
@@ -394,10 +402,10 @@ app.post("/expenses", (req, res) => {
             console.log("beginningBalance", {
               currentMonth,
               currentYear,
-              amount,
+              balance,
             });
             const updateBeginningBalance = `UPDATE beginningBalance
-              SET balance = balance + ${amount},
+              SET balance = balance + ${updatedAmount},
               updated_at = (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime'))
               WHERE month = ${currentMonth} AND year = ${currentYear}`;
             db.run(updateBeginningBalance, function (err) {
@@ -408,7 +416,7 @@ app.post("/expenses", (req, res) => {
               console.log("beginningBalance update", {
                 currentMonth,
                 currentYear,
-                amount,
+                updatedAmount,
               });
             });
           }
@@ -416,7 +424,7 @@ app.post("/expenses", (req, res) => {
       });
     } else {
       const updateBeginningBalance = `UPDATE beginningBalance
-        SET balance = balance + ${amount},
+        SET balance = balance + ${updatedAmount},
         updated_at = (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')) 
         WHERE month = ${currentMonth} AND year = ${currentYear}`;
       db.run(updateBeginningBalance, function (err) {
@@ -427,7 +435,7 @@ app.post("/expenses", (req, res) => {
         console.log("beginningBalance update", {
           currentMonth,
           currentYear,
-          amount,
+          updatedAmount,
         });
       });
     }
