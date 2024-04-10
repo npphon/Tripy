@@ -19,6 +19,23 @@ export default function HomeScreen() {
   const [cashbox, setCashbox] = useState([]);
   const [sumAllPockets, setSumAllPockets] = useState([]);
 
+  const amount = sumAllPockets[0].total;
+  const formattedAmount = amount.toLocaleString("th-TH", {
+    style: "currency",
+    currency: "THB",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+
+  const balanceCashbox = cashbox[0].pocket_balance;
+  const formattedBalanceCashbox = balanceCashbox.toLocaleString("th-TH", {
+    style: "currency",
+    currency: "THB",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }); 
+  
+
   const isFocused = useIsFocused();
 
   const fetchCashbox = async () => {
@@ -73,9 +90,7 @@ export default function HomeScreen() {
         <View className="flex-row items-center">
           <Text className="font-bold text-base">ยอดเงินในบัญชี: </Text>
           <Text className="text-base">
-            {`฿ ${
-              sumAllPockets.length > 0 ? sumAllPockets[0].total : "Loading..."
-            }`}
+            {` ${sumAllPockets.length > 0 ? formattedAmount : "Loading..."}`}
           </Text>
         </View>
       </View>
@@ -85,8 +100,8 @@ export default function HomeScreen() {
         </View>
         <View className="flex-row justify-between items-center">
           <Text className="text-base">
-            {`฿ ${
-              cashbox.length > 0 ? cashbox[0].pocket_balance : "Loading..."
+            {` ${
+              cashbox.length > 0 ? formattedBalanceCashbox : "Loading..."
             }`}
           </Text>
           <View className="flex-row">
