@@ -239,11 +239,6 @@ app.post("/moveMoney", (req, res) => {
   const { sourcePocketId, targetPocketId, amountToMove } = req.body;
   console.log(sourcePocketId, targetPocketId, amountToMove);
 
-  // console.log(amountToMove);
-  // if(typeof amountToMove != "number") {
-  //   return res.status(400).send('amount not a number')
-  // }
-
   const sql = `
     UPDATE pockets
     SET pocket_balance = pocket_balance - ${amountToMove} 

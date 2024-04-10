@@ -20,9 +20,9 @@ export default function ExpenseCard({ item }) {
     try {
       let updatedAmount = item.amount;
       if (item.type === "expense") {
-        updatedAmount = item.amount; // ถ้าเป็น expense ให้ใส่ลบลงไปใน pocket_balance
+        updatedAmount = item.amount;
       } else if (item.type === "income") {
-        updatedAmount = -item.amount; // ถ้าเป็น expense ให้ใส่ลบลงไปใน pocket_balance
+        updatedAmount = -item.amount;
       }
       const response = await axios.patch(
         `http://localhost:3000/pocket/${item.pocket_id}`,

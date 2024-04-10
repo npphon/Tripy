@@ -53,7 +53,13 @@ export default function StatementScreen(props) {
   }
 
   const expensesWithBalance = expenses.map((expense) => {
-    const balance = currentBalance + expense.amount;
+    let updatedAmount = expense.amount;
+    if (expense.type === "expense") {
+      updatedAmount = -expense.amount;
+    } else if (expense.type === "income") {
+      updatedAmount = expense.amount;
+    }
+    const balance = currentBalance + updatedAmount;
     currentBalance = balance;
     return { ...expense, balance };
   });
@@ -84,7 +90,7 @@ export default function StatementScreen(props) {
                   return (
                     <View>
                       <View>
-                        {item.amount >= 0 ? (
+                        {item.type == "income" ? (
                           <View style={styles.row}>
                             <Text style={[styles.column, styles.dateColumn]}>
                               {item.created_at}
