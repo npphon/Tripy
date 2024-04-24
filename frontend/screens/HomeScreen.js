@@ -19,23 +19,6 @@ export default function HomeScreen() {
   const [cashbox, setCashbox] = useState([]);
   const [sumAllPockets, setSumAllPockets] = useState([]);
 
-  const amount = sumAllPockets[0].total;
-  const formattedAmount = amount.toLocaleString("th-TH", {
-    style: "currency",
-    currency: "THB",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  });
-
-  const balanceCashbox = cashbox[0].pocket_balance;
-  const formattedBalanceCashbox = balanceCashbox.toLocaleString("th-TH", {
-    style: "currency",
-    currency: "THB",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }); 
-  
-
   const isFocused = useIsFocused();
 
   const fetchCashbox = async () => {
@@ -90,7 +73,16 @@ export default function HomeScreen() {
         <View className="flex-row items-center">
           <Text className="font-bold text-base">ยอดเงินในบัญชี: </Text>
           <Text className="text-base">
-            {` ${sumAllPockets.length > 0 ? formattedAmount : "Loading..."}`}
+            {` ${
+              sumAllPockets.length > 0
+                ? sumAllPockets[0].total.toLocaleString("th-TH", {
+                    style: "currency",
+                    currency: "THB",
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  })
+                : "Loading..."
+            }`}
           </Text>
         </View>
       </View>
@@ -101,7 +93,14 @@ export default function HomeScreen() {
         <View className="flex-row justify-between items-center">
           <Text className="text-base">
             {` ${
-              cashbox.length > 0 ? formattedBalanceCashbox : "Loading..."
+              cashbox.length > 0
+                ? cashbox[0].pocket_balance.toLocaleString("th-TH", {
+                    style: "currency",
+                    currency: "THB",
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  })
+                : "Loading..."
             }`}
           </Text>
           <View className="flex-row">
@@ -183,11 +182,26 @@ export default function HomeScreen() {
                     <View>
                       {item.target ? (
                         <Text className={`${colors.heading} text-xs`}>
-                          {`฿ ${item.pocket_balance} / ${item.target}`}
+                          {`${item.pocket_balance.toLocaleString("th-TH", {
+                            style: "currency",
+                            currency: "THB",
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                          })} / ${item.target.toLocaleString("th-TH", {
+                            style: "currency",
+                            currency: "THB",
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                          }).replace("฿", "")}`}
                         </Text>
                       ) : (
                         <Text className={`${colors.heading} text-xs`}>
-                          {`฿ ${item.pocket_balance}`}
+                          {`${item.pocket_balance.toLocaleString("th-TH", {
+                            style: "currency",
+                            currency: "THB",
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                          })}`}
                         </Text>
                       )}
                     </View>

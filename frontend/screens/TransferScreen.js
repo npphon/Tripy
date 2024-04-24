@@ -29,8 +29,24 @@ export default function TransferScreen(props) {
           amountToMove: amount,
         });
         const uuid = UUIDGenerator.v4().substring(0, 8);
-        addExpense(excludedName, pocket_name, amount, id, "income", uuid, excludedId);
-        addExpense(excludedName, pocket_name, amount, excludedId, "expense", uuid, id);
+        addExpense(
+          excludedName,
+          pocket_name,
+          amount,
+          id,
+          "income",
+          uuid,
+          excludedId
+        );
+        addExpense(
+          excludedName,
+          pocket_name,
+          amount,
+          excludedId,
+          "expense",
+          uuid,
+          id
+        );
         setLoading(false);
         Alert.alert("move money successful", "", [
           { text: "OK", onPress: () => navigation.navigate("Home") },
@@ -44,17 +60,28 @@ export default function TransferScreen(props) {
     }
   };
 
-  const addExpense = async (from_pocket, to_pocket, amount, id, type, transfer_id, transfer_pocket_id) => {
+  const addExpense = async (
+    from_pocket,
+    to_pocket,
+    amount,
+    id,
+    type,
+    transfer_id,
+    transfer_pocket_id
+  ) => {
     try {
-      const response = await axios.post("http://localhost:3000/expensesMoveMoney", {
-        title: `ย้ายเงินจาก ${from_pocket} ไป ${to_pocket} สำเร็จ`,
-        amount: amount,
-        category: "other",
-        pocket_id: id,
-        type: type,
-        transfer_id: transfer_id,
-        transfer_pocket_id: transfer_pocket_id
-      });
+      const response = await axios.post(
+        "http://localhost:3000/expensesMoveMoney",
+        {
+          title: `ย้ายเงินจาก ${from_pocket} ไป ${to_pocket} สำเร็จ`,
+          amount: amount,
+          category: "other",
+          pocket_id: id,
+          type: type,
+          transfer_id: transfer_id,
+          transfer_pocket_id: transfer_pocket_id,
+        }
+      );
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -92,7 +119,12 @@ export default function TransferScreen(props) {
               className="p-4 bg-white rounded-full mb-3"
             />
             <Text>
-              จาก {excludedName} : ฿ {excludedBalance}
+              จาก {excludedName} : {excludedBalance.toLocaleString("th-TH", {
+                style: "currency",
+                currency: "THB",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}
             </Text>
           </View>
         </View>

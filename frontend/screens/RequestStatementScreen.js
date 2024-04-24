@@ -21,12 +21,24 @@ export default function RequestStatementScreen() {
 
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
+  const [years, setYears] = useState([])
+
+  const fetchYear = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/yearBeginningBalance`);
+      setYears(response.data);
+    } catch (error) {
+      console.error("Error fetching pocket:", error);
+    }
+  };
 
   // สร้างรายการปี (ในที่นี้คือ 2020 - 2025)
-  const years = Array.from(new Array(4), (_, index) => {
-    const year = new Date().getFullYear() - 3 + index;
-    return { label: year.toString(), value: year.toString() };
-  });
+  // const years = Array.from(new Array(4), (_, index) => {
+  //   const year = new Date().getFullYear() - 3 + index;
+  //   return { label: year.toString(), value: year.toString() };
+  // });
+
+  
 
   const months = [
     { label: "ม.ค.", value: "01" },
@@ -50,6 +62,12 @@ export default function RequestStatementScreen() {
       Alert.alert("month and year are required!", "", [{ text: "OK" }]);
     }
   };
+
+  useEffect(() => {
+    fetchYear();
+  }, []);
+
+  console.log(years);
 
   return (
     <ScreenWrapper>
@@ -93,12 +111,12 @@ export default function RequestStatementScreen() {
                 iconStyle={styles.iconStyle}
                 data={years}
                 maxHeight={300}
-                labelField="label"
-                valueField="value"
+                labelField="year"
+                valueField="year"
                 placeholder="ปี"
                 value={selectedYear}
                 onChange={(item) => {
-                  setSelectedYear(item.value);
+                  setSelectedYear(item.year);
                 }}
               />
             </View>

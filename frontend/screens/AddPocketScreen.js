@@ -24,7 +24,7 @@ export default function AddPocketScreen() {
   const navigation = useNavigation();
 
   const handleAddPocket = async () => {
-    if (pocketName) {
+    if (pocketName && category) {
       try {
         setLoading(true);
         const response = await axios.post("http://localhost:3000/pockets", {
@@ -46,7 +46,7 @@ export default function AddPocketScreen() {
         Alert.alert("Error creating pocket", "", [{ text: "OK" }]);
       }
     } else {
-      Alert.alert("Pocket Name and Balance are required!", "", [
+      Alert.alert("Pocket Name and Category are required!", "", [
         { text: "OK" },
       ]);
     }

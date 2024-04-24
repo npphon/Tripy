@@ -143,9 +143,30 @@ export default function ExpenseCard({ item }) {
         <Text className="">{item.created_at}</Text>
         <View className="flex-row">
           {type == "expense" ? (
-            <Text>-{item.amount} บาท</Text>
+            <Text>
+              -
+              {item.amount
+                .toLocaleString("th-TH", {
+                  style: "currency",
+                  currency: "THB",
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })
+                .replace("฿", "")}{" "}
+              บาท
+            </Text>
           ) : (
-            <Text>{item.amount} บาท</Text>
+            <Text>
+              {item.amount
+                .toLocaleString("th-TH", {
+                  style: "currency",
+                  currency: "THB",
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })
+                .replace("฿", "")}{" "}
+              บาท
+            </Text>
           )}
           {/* <Text className="">{item.amount} บาท</Text> */}
           <TouchableOpacity

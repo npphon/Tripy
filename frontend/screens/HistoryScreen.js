@@ -62,9 +62,14 @@ export default function HistoryScreen(props) {
               </Text>
               <View>
                 <Text className={`${colors.heading} text-base pl-14`}>
-                  {`฿ ${
+                  {`${
                     pockets.length > 0
-                      ? pockets[0].pocket_balance
+                      ? pockets[0].pocket_balance.toLocaleString("th-TH", {
+                          style: "currency",
+                          currency: "THB",
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })
                       : "Loading..."
                   }`}
                 </Text>
