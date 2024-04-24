@@ -150,7 +150,7 @@ export default function HomeScreen() {
             <Text className={colors.heading}>Add Pocket</Text>
           </TouchableOpacity>
         </View>
-        <View style={{ height: 550 }}>
+        <View style={{ height: 450 }}>
           <FlatList
             data={pockets.filter((item) => item.id !== 1)}
             numColumns={2}
