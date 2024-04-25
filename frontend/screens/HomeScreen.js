@@ -73,8 +73,15 @@ export default function HomeScreen() {
         <View className="flex-row items-center">
           <Text className="font-bold text-base">ยอดเงินในบัญชี: </Text>
           <Text className="text-base">
-            {`฿ ${
-              sumAllPockets.length > 0 ? sumAllPockets[0].total : "Loading..."
+            {` ${
+              sumAllPockets.length > 0
+                ? sumAllPockets[0].total.toLocaleString("th-TH", {
+                    style: "currency",
+                    currency: "THB",
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  })
+                : "Loading..."
             }`}
           </Text>
         </View>
@@ -85,8 +92,15 @@ export default function HomeScreen() {
         </View>
         <View className="flex-row justify-between items-center">
           <Text className="text-base">
-            {`฿ ${
-              cashbox.length > 0 ? cashbox[0].pocket_balance : "Loading..."
+            {` ${
+              cashbox.length > 0
+                ? cashbox[0].pocket_balance.toLocaleString("th-TH", {
+                    style: "currency",
+                    currency: "THB",
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  })
+                : "Loading..."
             }`}
           </Text>
           <View className="flex-row">
@@ -136,7 +150,7 @@ export default function HomeScreen() {
             <Text className={colors.heading}>Add Pocket</Text>
           </TouchableOpacity>
         </View>
-        <View style={{ height: 550 }}>
+        <View style={{ height: 450 }}>
           <FlatList
             data={pockets.filter((item) => item.id !== 1)}
             numColumns={2}
@@ -168,11 +182,26 @@ export default function HomeScreen() {
                     <View>
                       {item.target ? (
                         <Text className={`${colors.heading} text-xs`}>
-                          {`฿ ${item.pocket_balance} / ${item.target}`}
+                          {`${item.pocket_balance.toLocaleString("th-TH", {
+                            style: "currency",
+                            currency: "THB",
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                          })} / ${item.target.toLocaleString("th-TH", {
+                            style: "currency",
+                            currency: "THB",
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                          }).replace("฿", "")}`}
                         </Text>
                       ) : (
                         <Text className={`${colors.heading} text-xs`}>
-                          {`฿ ${item.pocket_balance}`}
+                          {`${item.pocket_balance.toLocaleString("th-TH", {
+                            style: "currency",
+                            currency: "THB",
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                          })}`}
                         </Text>
                       )}
                     </View>

@@ -101,13 +101,27 @@ export default function StatementScreen(props) {
                               {item.title}
                             </Text>
                             <Text style={[styles.column, styles.incomeColumn]}>
-                              {item.amount}
+                              {item.amount
+                                .toLocaleString("th-TH", {
+                                  style: "currency",
+                                  currency: "THB",
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                })
+                                .replace("฿", "")}
                             </Text>
                             <Text style={[styles.column, styles.expenseColumn]}>
                               -
                             </Text>
                             <Text style={[styles.column, styles.balanceColumn]}>
-                              {item.balance}
+                              {item.balance
+                                .toLocaleString("th-TH", {
+                                  style: "currency",
+                                  currency: "THB",
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                })
+                                .replace("฿", "")}
                             </Text>
                           </View>
                         ) : (
@@ -124,10 +138,24 @@ export default function StatementScreen(props) {
                               -
                             </Text>
                             <Text style={[styles.column, styles.expenseColumn]}>
-                              {item.amount}
+                              {item.amount
+                                .toLocaleString("th-TH", {
+                                  style: "currency",
+                                  currency: "THB",
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                })
+                                .replace("฿", "")}
                             </Text>
                             <Text style={[styles.column, styles.balanceColumn]}>
-                              {item.balance}
+                              {item.balance
+                                .toLocaleString("th-TH", {
+                                  style: "currency",
+                                  currency: "THB",
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                })
+                                .replace("฿", "")}
                             </Text>
                           </View>
                         )}
@@ -180,7 +208,14 @@ export default function StatementScreen(props) {
                       </Text>
                       <Text style={[styles.column, styles.balanceColumn]}>
                         {beginningBalance && beginningBalance.length > 0
-                          ? `${beginningBalance[0].balance}`
+                          ? `${beginningBalance[0].balance
+                              .toLocaleString("th-TH", {
+                                style: "currency",
+                                currency: "THB",
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })
+                              .replace("฿", "")}`
                           : ""}
                       </Text>
                     </View>

@@ -38,6 +38,20 @@ app.get("/beginningBalance", (req, res) => {
   });
 });
 
+app.get("/yearBeginningBalance", (req, res) => {
+
+  let query = `SELECT DISTINCT year FROM beginningBalance`;
+
+  db.all(query, (err, rows) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
 app.patch("/beginningBalance", (req, res) => {
   // const {  } = req.query;
   const { month, year, amount } = req.body;
@@ -238,11 +252,6 @@ app.delete("/pockets/:id", (req, res) => {
 app.post("/moveMoney", (req, res) => {
   const { sourcePocketId, targetPocketId, amountToMove } = req.body;
   console.log(sourcePocketId, targetPocketId, amountToMove);
-
-  // console.log(amountToMove);
-  // if(typeof amountToMove != "number") {
-  //   return res.status(400).send('amount not a number')
-  // }
 
   const sql = `
     UPDATE pockets
@@ -465,12 +474,7 @@ app.delete("/expenses/pockets/:id", (req, res) => {
 
   const removeExpense = `DELETE FROM expenses WHERE pocket_id = ${id}`;
 
-  db.all(getExpenseById, (err, rows) => {
-    // const noExpenseFound = !rows.length;
-    // if (noExpenseFound) {
-    //   console.error("pocketEx",err);
-    //   return res.status(400).send("expense doesn't exist in database");
-    // }
+ 
     db.run(removeExpense, function (err) {
       if (err) {
         console.error("pocke", err);
@@ -479,7 +483,6 @@ app.delete("/expenses/pockets/:id", (req, res) => {
       res.status(200).send("expense removed Successfully!");
     });
   });
-});
 
 app.delete("/expenses/transfer/pocket/:transfer_pocket_id", (req, res) => {
   const transfer_pocket_id = parseInt(req.params.transfer_pocket_id);
@@ -490,11 +493,11 @@ app.delete("/expenses/transfer/pocket/:transfer_pocket_id", (req, res) => {
   const removeExpense = `DELETE FROM expenses WHERE transfer_pocket_id = ${transfer_pocket_id}`;
 
   db.all(getExpenseByTransferPocketId, (err, rows) => {
-    const noExpenseFound = !rows.length;
-    if (noExpenseFound) {
-      console.error(err);
-      return res.status(400).send("expense doesn't exist in database");
-    }
+    // const noExpenseFound = !rows.length;
+    // if (noExpenseFound) {
+    //   console.error(err);
+    //   return res.status(400).send("expense doesn't exist in database");
+    // }
     db.run(removeExpense, function (err) {
       if (err) {
         console.error(err);

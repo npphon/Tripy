@@ -45,7 +45,6 @@ export default function PocketExpensesScreen(props) {
     }
   };
 
-
   const deleteExpensesByPocketId = async (id) => {
     try {
       const response = await axios.delete(
@@ -69,8 +68,8 @@ export default function PocketExpensesScreen(props) {
   const refundToCashbox = async (pocket_balance) => {
     try {
       const response = await axios.patch("http://localhost:3000/cashbox/1", {
-          balance: pocket_balance,
-        });
+        balance: pocket_balance,
+      });
     } catch (error) {
       console.error("Error refund to cashbox:", error);
     }
@@ -79,7 +78,7 @@ export default function PocketExpensesScreen(props) {
   const deletePocket = async (id) => {
     refundToCashbox(pocket_balance);
     const deleteExpense = await deleteExpensesByPocketId(id);
-    deleteExpensesByTransferPocketId(id)
+    deleteExpensesByTransferPocketId(id);
     const response = await axios.delete(`http://localhost:3000/pockets/${id}`);
     if (response.status == 200) {
       Alert.alert("delete pockets successful", "", [
@@ -99,12 +98,16 @@ export default function PocketExpensesScreen(props) {
   };
 
   const buttonDeletePocket = async () => {
-    Alert.alert("คุณแน่ใจใช่ไหมมว่าจะลบ Pocket นี้?", "ถ้าลบ Pocket ที่มีเงินอยู่ เงินจะถูกโอนเข้าสู่cashboxอัตโนมัติ", [
-      {
-        text: "Cancel",
-      },
-      { text: "ยืนยันการลบ", onPress: () => deletePocket(id) },
-    ]);
+    Alert.alert(
+      "คุณแน่ใจใช่ไหมมว่าจะลบ Pocket นี้?",
+      "ถ้าลบ Pocket ที่มีเงินอยู่ เงินจะถูกโอนเข้าสู่cashboxอัตโนมัติ",
+      [
+        {
+          text: "Cancel",
+        },
+        { text: "ยืนยันการลบ", onPress: () => deletePocket(id) },
+      ]
+    );
   };
 
   useEffect(() => {
@@ -131,17 +134,35 @@ export default function PocketExpensesScreen(props) {
               <View>
                 {target ? (
                   <Text className={`${colors.heading} text-base pl-14`}>
-                    {`฿ ${
+                    {`${
                       pockets.length > 0
                         ? pockets[0].pocket_balance
+                            .toLocaleString("th-TH", {
+                              style: "currency",
+                              currency: "THB",
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 0,
+                            })
                         : "Loading..."
-                    } / ${target}`}
+                    } / ${target
+                      .toLocaleString("th-TH", {
+                        style: "currency",
+                        currency: "THB",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })
+                      .replace("฿", "")}`}
                   </Text>
                 ) : (
                   <Text className={`${colors.heading} text-base pl-14`}>
-                    {`฿ ${
+                    {`${
                       pockets.length > 0
-                        ? pockets[0].pocket_balance
+                        ? pockets[0].pocket_balance.toLocaleString("th-TH", {
+                            style: "currency",
+                            currency: "THB",
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                          })
                         : "Loading..."
                     }`}
                   </Text>
