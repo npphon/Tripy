@@ -57,8 +57,8 @@ export default function HomeScreen() {
   return (
     <ScreenWrapper className="flex-1">
       <View className="flex-row justify-between items-center p-4">
-        <Text className={`${colors.heading} font-bold text-3xl`}>
-          My manage
+        <Text className={`${colors.heading} font-bold text-2xl`}>
+        POCKET MONEY MANAGEMENT MY WAY
         </Text>
         <TouchableOpacity className="p-2 px-3 bg-white border border-gray-200 rounded-full">
           <Text
