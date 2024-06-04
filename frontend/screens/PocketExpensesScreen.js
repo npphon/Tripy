@@ -91,7 +91,7 @@ export default function PocketExpensesScreen(props) {
       //show error
       Alert.alert("delete pockets unsuccessful", "", [
         {
-          text: "ok",
+          text: "ตกลง",
         },
       ]);
     }
@@ -99,11 +99,11 @@ export default function PocketExpensesScreen(props) {
 
   const buttonDeletePocket = async () => {
     Alert.alert(
-      "คุณแน่ใจใช่ไหมมว่าจะลบ Pocket นี้?",
+      "คุณแน่ใจใช่ไหมว่าจะลบ Pocket นี้?",
       "ถ้าลบ Pocket ที่มีเงินอยู่ เงินจะถูกโอนเข้าสู่cashboxอัตโนมัติ",
       [
         {
-          text: "Cancel",
+          text: "ยกเลิก",
         },
         { text: "ยืนยันการลบ", onPress: () => deletePocket(id) },
       ]

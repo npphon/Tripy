@@ -63,7 +63,7 @@ export default function SelectPocketScreen(props) {
           <FlatList
             data={pockets.filter((item) => item.id !== excludedId)}
             ListEmptyComponent={
-              <EmptyList message={"You haven't recorded any trips yet"} />
+              <EmptyList message={"You haven't created any pocket yet"} />
             }
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}

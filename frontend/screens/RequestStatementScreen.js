@@ -67,8 +67,6 @@ export default function RequestStatementScreen() {
     fetchYear();
   }, []);
 
-  console.log(years);
-
   return (
     <ScreenWrapper>
       <View className="flex h-full px-4 mx-2 justify-between">

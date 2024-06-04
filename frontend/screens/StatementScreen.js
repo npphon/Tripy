@@ -49,6 +49,7 @@ export default function StatementScreen(props) {
   let currentBalance = 0;
 
   if (beginningBalance.length > 0) {
+    console.log("test",beginningBalance);
     currentBalance = beginningBalance[0].balance;
   }
 
@@ -216,7 +217,7 @@ export default function StatementScreen(props) {
                                 maximumFractionDigits: 0,
                               })
                               .replace("฿", "")}`
-                          : ""}
+                          : 0}
                       </Text>
                     </View>
                   </View>

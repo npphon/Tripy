@@ -19,28 +19,79 @@ app.get("/beginningBalance", (req, res) => {
   const { month, year } = req.query;
   console.log("begin", month, year);
 
-  let query;
-  if (parseInt(month) === 1) {
-    const previousYear = parseInt(year) - 1;
-    query = `SELECT * FROM beginningBalance WHERE month = 12 AND year = ${previousYear}`;
-  } else {
-    const previousMonth = parseInt(month) - 1;
-    query = `SELECT * FROM beginningBalance WHERE month = ${previousMonth} AND year = ${year}`;
-  }
+  let currentMonth = parseInt(month);
+  let currentYear = parseInt(year);
 
-  db.all(query, (err, rows) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send("Internal Server Error");
-    } else {
-      res.json(rows);
-    }
-  });
+  const findBalance = (month, year, callback) => {
+    let query = `SELECT * FROM beginningBalance WHERE month = ${month} AND year = ${year}`;
+    db.all(query, (err, rows) => {
+      if (err) {
+        callback(err, null);
+      } else if (rows.length > 0) {
+        callback(null, rows);
+      } else {
+        if (month === 1) {
+          // If month is January, go to December of the previous year
+          findBalance(12, year - 1, callback);
+        } else {
+          // Otherwise, go to the previous month of the same year
+          findBalance(month - 1, year, callback);
+        }
+      }
+    });
+  };
+
+  // Start searching from the previous month immediately
+  if (currentMonth === 1) {
+    findBalance(12, currentYear - 1, (err, rows) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+      } else if (rows.length > 0) {
+        res.json(rows);
+      } else {
+        res.json([{ balance: 0 }]);
+      }
+    });
+  } else {
+    findBalance(currentMonth - 1, currentYear, (err, rows) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+      } else if (rows.length > 0) {
+        res.json(rows);
+      } else {
+        res.json([{ balance: 0 }]);
+      }
+    });
+  }
 });
 
-app.get("/yearBeginningBalance", (req, res) => {
+// app.get("/beginningBalance", (req, res) => {
+//   const { month, year } = req.query;
+//   console.log("begin", month, year);
 
-  let query = `SELECT DISTINCT year FROM beginningBalance`;
+//   let query;
+//   if (parseInt(month) === 1) {
+//     const previousYear = parseInt(year) - 1;
+//     query = `SELECT * FROM beginningBalance WHERE month = 12 AND year = ${previousYear}`;
+//   } else {
+//     const previousMonth = parseInt(month) - 1;
+//     query = `SELECT * FROM beginningBalance WHERE month = ${previousMonth} AND year = ${year}`;
+//   }
+
+//   db.all(query, (err, rows) => {
+//     if (err) {
+//       console.error(err);
+//       res.status(500).send("Internal Server Error");
+//     } else {
+//       res.json(rows);
+//     }
+//   });
+// });
+
+app.get("/yearBeginningBalance", (req, res) => {
+  let query = `SELECT DISTINCT year FROM beginningBalance WHERE id <> 1`;
 
   db.all(query, (err, rows) => {
     if (err) {
@@ -53,7 +104,6 @@ app.get("/yearBeginningBalance", (req, res) => {
 });
 
 app.patch("/beginningBalance", (req, res) => {
-  // const {  } = req.query;
   const { month, year, amount } = req.body;
   console.log("begin", month, year, amount);
 
@@ -295,17 +345,15 @@ app.post("/expensesMoveMoney", (req, res) => {
         return res.status(500).send("Internal Server Error");
       }
 
-      res
-        .status(201)
-        .json({
-          title,
-          amount,
-          category,
-          pocket_id,
-          type,
-          transfer_id,
-          transfer_pocket_id,
-        });
+      res.status(201).json({
+        title,
+        amount,
+        category,
+        pocket_id,
+        type,
+        transfer_id,
+        transfer_pocket_id,
+      });
     }
   );
 });
@@ -374,7 +422,6 @@ app.post("/expenses", (req, res) => {
   } else if (type === "income") {
     updatedAmount = amount; // ถ้าเป็น expense ให้ใส่ลบลงไปใน pocket_balance
   }
-
 
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth() + 1; // เดือนปัจจุบัน
@@ -474,15 +521,14 @@ app.delete("/expenses/pockets/:id", (req, res) => {
 
   const removeExpense = `DELETE FROM expenses WHERE pocket_id = ${id}`;
 
- 
-    db.run(removeExpense, function (err) {
-      if (err) {
-        console.error("pocke", err);
-        return res.status(500).send("Internal Server Error");
-      }
-      res.status(200).send("expense removed Successfully!");
-    });
+  db.run(removeExpense, function (err) {
+    if (err) {
+      console.error("pocke", err);
+      return res.status(500).send("Internal Server Error");
+    }
+    res.status(200).send("expense removed Successfully!");
   });
+});
 
 app.delete("/expenses/transfer/pocket/:transfer_pocket_id", (req, res) => {
   const transfer_pocket_id = parseInt(req.params.transfer_pocket_id);
@@ -553,6 +599,28 @@ app.delete("/expenses/transfer/:transfer_id", (req, res) => {
       res.status(200).send("expense removed Successfully!");
     });
   });
+});
+
+app.delete("/reset", (req, res) => {
+  // SQL commands for resetting application
+  const resetCommands = [
+    `DELETE FROM pockets WHERE id <> 1;`,
+    `UPDATE pockets SET pocket_balance = 0, created_at = strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime') WHERE id = 1;`,
+    `DELETE FROM expenses;`,
+    `DELETE FROM beginningBalance WHERE id <> 1;`
+  ];
+
+  // Execute each SQL command
+  resetCommands.forEach(command => {
+    db.run(command, function (err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Internal Server Error");
+      }
+    });
+  });
+
+  res.status(200).send("Application reset successfully!");
 });
 
 // Start the Express server

@@ -1,15 +1,22 @@
-import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  FlatList,
+  Alert,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import ScreenWrapper from "../components/screenWrapper";
 import { colors } from "../theme";
 import selectImage from "../assets/images/selectImage";
 import EmptyList from "../components/emptyList";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-import { PlusCircleIcon } from "react-native-heroicons/outline";
 import { ArrowDownTrayIcon } from "react-native-heroicons/outline";
 import { ArrowUpTrayIcon } from "react-native-heroicons/outline";
 import { DocumentTextIcon } from "react-native-heroicons/outline";
 import { ClockIcon } from "react-native-heroicons/outline";
+import { ArrowPathIcon } from "react-native-heroicons/outline";
 import axios from "axios";
 
 export default function HomeScreen() {
@@ -48,6 +55,38 @@ export default function HomeScreen() {
     }
   };
 
+  const resetDatabase = async () => {
+    try {
+      const response = await axios.delete("http://localhost:3000/reset");
+      Alert.alert("ลบข้อมูลทั้งหมดสำเร็จ", "", [
+        {
+          text: "ตกลง",
+        },
+      ]);
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      Alert.alert("reset unsuccessful", "", [
+        {
+          text: "ตกลง",
+        },
+      ]);
+    }
+  };
+
+  const handleReset = async () => {
+    Alert.alert(
+      "คุณแน่ใจใช่ไหมว่าจะลบข้อมูลทั้งหมด?",
+      "",
+      [
+        {
+          text: "ยกเลิก",
+        },
+        { text: "ยืนยันการลบ", onPress: () => resetDatabase() },
+      ]
+    );
+  };
+
   useEffect(() => {
     if (isFocused) fetchCashbox();
     fetchSumAllPockets();
@@ -58,7 +97,7 @@ export default function HomeScreen() {
     <ScreenWrapper className="flex-1">
       <View className="flex-row justify-between items-center p-4">
         <Text className={`${colors.heading} font-bold text-2xl`}>
-        POCKET MONEY MANAGEMENT MY WAY
+          POCKET MONEY MANAGEMENT MY WAY
         </Text>
         <TouchableOpacity className="p-2 px-3 bg-white border border-gray-200 rounded-full">
           <Text
@@ -155,7 +194,7 @@ export default function HomeScreen() {
             data={pockets.filter((item) => item.id !== 1)}
             numColumns={2}
             ListEmptyComponent={
-              <EmptyList message={"You haven't recorded any trips yet"} />
+              <EmptyList message={"You haven't created any pocket yet"} />
             }
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
@@ -187,12 +226,14 @@ export default function HomeScreen() {
                             currency: "THB",
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 0,
-                          })} / ${item.target.toLocaleString("th-TH", {
-                            style: "currency",
-                            currency: "THB",
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0,
-                          }).replace("฿", "")}`}
+                          })} / ${item.target
+                            .toLocaleString("th-TH", {
+                              style: "currency",
+                              currency: "THB",
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 0,
+                            })
+                            .replace("฿", "")}`}
                         </Text>
                       ) : (
                         <Text className={`${colors.heading} text-xs`}>
@@ -211,6 +252,12 @@ export default function HomeScreen() {
             }}
           />
         </View>
+        <TouchableOpacity
+          onPress={() => handleReset()}
+          className="flex-row justify-end bottom-10 mr-2"
+        >
+          <ArrowPathIcon size="28" color="black" />
+        </TouchableOpacity>
       </View>
     </ScreenWrapper>
   );
