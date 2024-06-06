@@ -13,7 +13,7 @@ const images = {
     null: require('./other.jpeg'),
     undefined: require('./other.jpeg'),
     saving: require('./saving.jpeg'),
-    spending: require('./expenseBanner.png'),
+    spending: require('./13.jpg'),
     traveling: require('./traveling.jpeg'),
     shopping: require('./shopping.jpeg'),
     investment: require('./investment.jpeg'),

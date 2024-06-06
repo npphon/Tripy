@@ -75,16 +75,12 @@ export default function HomeScreen() {
   };
 
   const handleReset = async () => {
-    Alert.alert(
-      "คุณแน่ใจใช่ไหมว่าจะลบข้อมูลทั้งหมด?",
-      "",
-      [
-        {
-          text: "ยกเลิก",
-        },
-        { text: "ยืนยันการลบ", onPress: () => resetDatabase() },
-      ]
-    );
+    Alert.alert("คุณแน่ใจใช่ไหมว่าจะลบข้อมูลทั้งหมด?", "", [
+      {
+        text: "ยกเลิก",
+      },
+      { text: "ยืนยันการลบ", onPress: () => resetDatabase() },
+    ]);
   };
 
   useEffect(() => {
@@ -252,12 +248,20 @@ export default function HomeScreen() {
             }}
           />
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => handleReset()}
-          className="flex-row justify-end bottom-10 mr-2"
+          className="flex-row justify-end bottom-10 mr-2 bg-white border border-gray-200 rounded-full"
         >
           <ArrowPathIcon size="28" color="black" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <View className="flex-row justify-end">
+          <TouchableOpacity
+            onPress={() => handleReset()}
+            className="justify-center items-center bottom-10 mr-2 bg-white rounded-full h-10 w-10"
+          >
+            <ArrowPathIcon size="30" color="black" />
+          </TouchableOpacity>
+        </View>
       </View>
     </ScreenWrapper>
   );
